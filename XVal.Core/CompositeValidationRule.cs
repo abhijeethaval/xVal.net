@@ -23,7 +23,7 @@ namespace XVal.Core
 
         public ValidationResult Execute(TEntity entity)
         {
-            if (Precondition == null || Precondition(entity))
+            if (Precondition.SatisfiedBy(entity))
             {
                 var childResult = ChildRules.Select(c => c.Execute(entity)).Aggregate(ValidationResult.Combine);
                 if (childResult)

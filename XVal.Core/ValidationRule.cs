@@ -21,7 +21,7 @@ namespace XVal.Core
 
         public ValidationResult Execute(TEntity entity)
         {
-            if (Precondition == null || Precondition(entity))
+            if (Precondition.SatisfiedBy(entity))
             {
                 var result = ValidateExprn(entity);
                 if (!result)
