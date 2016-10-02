@@ -7,6 +7,7 @@ namespace XVal.Core
     {
         public MessageFormatter(string format, params Func<TEntity, object>[] arguments)
         {
+            format.ThrowIfArgumentNullOrWhiteSpace(nameof(format));
             Format = format;
             Arguments = arguments;
         }

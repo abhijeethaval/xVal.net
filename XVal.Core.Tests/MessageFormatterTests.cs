@@ -1,9 +1,26 @@
-﻿using Xunit;
+﻿using System;
+using Xunit;
 
 namespace XVal.Core.Tests
 {
     public class MessageFormatterTests
     {
+        [Fact]
+        public void ConstructorThrowsIfFormatIsNull()
+        {
+            var exception = Assert.Throws<ArgumentNullException>(() => new MessageFormatter<object>(null));
+            Assert.Equal("Value cannot be null." + Environment.NewLine + "Parameter name: format", exception.Message);
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData(" ")]
+        public void ConstructorThrowsIfFormatIsEmptyOrSpace(string message)
+        {
+            var exception = Assert.Throws<ArgumentException>(() => new MessageFormatter<object>(message));
+            Assert.Equal("Value cannot be empty string or white space." + Environment.NewLine + "Parameter name: format", exception.Message);
+        }
+
         [Fact]
         public void GetMessageWithoutFormatParameter()
         {
