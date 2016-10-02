@@ -7,14 +7,14 @@ namespace XVal.Core.Tests
     public class ValidationRuleTests
     {
         [Fact]
-        public void ExecuteThrowsIfMessageFormatterIsNull()
+        public void ConstructorThrowsIfMessageFormatterIsNull()
         {
             var exception = Assert.Throws<ArgumentNullException>(() => new ValidationRule<Employee>(null, null, e => false));
             Assert.Equal("Value cannot be null." + Environment.NewLine + "Parameter name: messageFormatter", exception.Message);
         }
 
         [Fact]
-        public void ExecuteThrowsIfValidateExprnIsNull()
+        public void ConstructorThrowsIfValidateExprnIsNull()
         {
             var exception = Assert.Throws<ArgumentNullException>(() => new ValidationRule<Employee>(null, new MessageFormatter<Employee>("Error message"), null));
             Assert.Equal("Value cannot be null." + Environment.NewLine + "Parameter name: validateExprn", exception.Message);
@@ -37,7 +37,7 @@ namespace XVal.Core.Tests
         }
 
         [Fact]
-        public void ReturnsPassedWhenValidateExpressionReturnsTrue()
+        public void ExecuteReturnsPassedWhenValidateExpressionReturnsTrue()
         {
             var rule = new ValidationRule<Employee>(e => true, new MessageFormatter<Employee>("Error message"), e => true);
             var result = rule.Execute(new Employee());
@@ -45,7 +45,7 @@ namespace XVal.Core.Tests
         }
 
         [Fact]
-        public void ReturnFailedWhenValidateExpressonReturnsFalse()
+        public void ExecuteReturnFailedWhenValidateExpressonReturnsFalse()
         {
             var employee = new Employee { Id = 1 };
             var rule = new ValidationRule<Employee>(e => true, new MessageFormatter<Employee>("Employee Id = {0}", e => e.Id), e => false);
