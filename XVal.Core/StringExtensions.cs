@@ -12,7 +12,7 @@ namespace XVal.Core
             }
             if (string.IsNullOrWhiteSpace(argument))
             {
-                throw new ArgumentException("Argument " + argumentName + " is empty string.");
+                throw new ArgumentException("Value cannot be empty string or white space.", argumentName);
             }
         }
     }

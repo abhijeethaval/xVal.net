@@ -10,6 +10,22 @@ namespace XVal.Core.Tests
     public class ValidationResultTests
     {
         [Fact]
+        public void FailedThrowsIfMessageIsNull()
+        {
+            var exception = Assert.Throws<ArgumentNullException>(() => ValidationResult.Failed(null));
+            Assert.Equal("Value cannot be null." + Environment.NewLine + "Parameter name: message", exception.Message);
+        }
+
+        [Theory]
+        [InlineData("")]
+        [InlineData(" ")]
+        public void FailedThrowsIfMessageIsEmptyOrSpace(string message)
+        {
+            var exception = Assert.Throws<ArgumentException>(() => ValidationResult.Failed(message));
+            Assert.Equal("Value cannot be empty string or white space." + Environment.NewLine + "Parameter name: message", exception.Message);
+        }
+
+        [Fact]
         public void PassedReturnsPassedResult()
         {
             var passed = ValidationResult.Passed();
