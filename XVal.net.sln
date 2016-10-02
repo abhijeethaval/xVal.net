@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XVal.Core", "XVal.Core\XVal
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XVal.Core.Tests", "XVal.Core.Tests\XVal.Core.Tests.csproj", "{3D19021B-7923-46C5-B3B4-B416B1EBF802}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XVal.Core.Sample", "XVal.Core.Sample\XVal.Core.Sample.csproj", "{6D307B9C-F981-4D98-ADB3-EA7969EAA875}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -21,6 +23,10 @@ Global
 		{3D19021B-7923-46C5-B3B4-B416B1EBF802}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3D19021B-7923-46C5-B3B4-B416B1EBF802}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3D19021B-7923-46C5-B3B4-B416B1EBF802}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D307B9C-F981-4D98-ADB3-EA7969EAA875}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D307B9C-F981-4D98-ADB3-EA7969EAA875}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D307B9C-F981-4D98-ADB3-EA7969EAA875}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D307B9C-F981-4D98-ADB3-EA7969EAA875}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

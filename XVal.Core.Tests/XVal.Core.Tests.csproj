@@ -59,6 +59,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CompositeValidationRuleTests.cs" />
     <Compile Include="GenericExtensions.cs" />
     <Compile Include="MessageFormatterTests.cs" />
     <Compile Include="TestData\Employee.cs" />

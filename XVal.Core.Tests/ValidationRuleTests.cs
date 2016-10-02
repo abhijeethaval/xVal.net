@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Xunit;
 using XVal.Core.Tests.TestData;
 
@@ -21,14 +22,6 @@ namespace XVal.Core.Tests
         }
 
         [Fact]
-        public void ExecuteReturnsPassedWhenPreconditionIsNull()
-        {
-            var rule = new ValidationRule<Employee>(null, new MessageFormatter<Employee>("Error message"), e => false);
-            var result = rule.Execute(new Employee());
-            Assert.True(result);
-        }
-
-        [Fact]
         public void ExecuteReturnsPassedWhenPreconditionReturnsFalse()
         {
             var rule = new ValidationRule<Employee>(e => false, new MessageFormatter<Employee>("Error message"), e => false);
@@ -37,7 +30,15 @@ namespace XVal.Core.Tests
         }
 
         [Fact]
-        public void ExecuteReturnsPassedWhenValidateExpressionReturnsTrue()
+        public void ExecuteReturnsPassedWhenValidateExpressionReturnsTrueAndPreconditionIsNull()
+        {
+            var rule = new ValidationRule<Employee>(null, new MessageFormatter<Employee>("Error message"), e => true);
+            var result = rule.Execute(new Employee());
+            Assert.True(result);
+        }
+
+        [Fact]
+        public void ExecuteReturnsPassedWhenValidateExpressionReturnsTrueAndPreconditionIsTrue()
         {
             var rule = new ValidationRule<Employee>(e => true, new MessageFormatter<Employee>("Error message"), e => true);
             var result = rule.Execute(new Employee());
@@ -45,7 +46,17 @@ namespace XVal.Core.Tests
         }
 
         [Fact]
-        public void ExecuteReturnFailedWhenValidateExpressonReturnsFalse()
+        public void ExecuteReturnFailedWhenValidateExpressonReturnsFalseAndPreconditionIsNull()
+        {
+            var employee = new Employee { Id = 1 };
+            var rule = new ValidationRule<Employee>(null, new MessageFormatter<Employee>("Employee Id = {0}", e => e.Id), e => false);
+            var result = rule.Execute(employee);
+            var expected = ValidationResult.Failed(string.Format(string.Format("Employee Id = {0}", employee.Id)));
+            Assert.Equal(expected, result);
+        }
+
+        [Fact]
+        public void ExecuteReturnFailedWhenValidateExpressonReturnsFalseAndPreconditionIsTrue()
         {
             var employee = new Employee { Id = 1 };
             var rule = new ValidationRule<Employee>(e => true, new MessageFormatter<Employee>("Employee Id = {0}", e => e.Id), e => false);

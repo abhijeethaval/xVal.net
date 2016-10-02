@@ -10,6 +10,8 @@ namespace XVal.Core
             MessageFormatter<TEntity> messageFormatter,
             IEnumerable<IValidationRule<TEntity>> childRules)
         {
+            messageFormatter.ThrowIfArgumentNull(nameof(messageFormatter));
+            childRules.ThrowIfArgumentNull(nameof(childRules));
             Precondition = precondition;
             MessageFormatter = messageFormatter;
             ChildRules = childRules;
@@ -21,19 +23,18 @@ namespace XVal.Core
 
         public ValidationResult Execute(TEntity entity)
         {
-            if (Precondition == null || !Precondition(entity))
+            if (Precondition == null || Precondition(entity))
             {
-                return ValidationResult.Passed();
+                var childResult = ChildRules.Select(c => c.Execute(entity)).Aggregate(ValidationResult.Combine);
+                if (childResult)
+                {
+                    return ValidationResult.Passed();
+                }
+
+                return ValidationResult.Failed(MessageFormatter.GetMessage(entity) + Environment.NewLine + childResult.Message);
             }
 
-            var childResult = ChildRules.Select(c => c.Execute(entity)).Aggregate(ValidationResult.Combine);
-
-            if (childResult)
-            {
-                return ValidationResult.Passed();
-            }
-
-            return ValidationResult.Failed(MessageFormatter.GetMessage(entity) + Environment.NewLine + childResult.Message);
+            return ValidationResult.Passed();
         }
     }
 }

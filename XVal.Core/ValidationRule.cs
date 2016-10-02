@@ -21,9 +21,16 @@ namespace XVal.Core
 
         public ValidationResult Execute(TEntity entity)
         {
-            return Precondition == null || !Precondition(entity) || ValidateExprn(entity)
-                ? ValidationResult.Passed()
-                : ValidationResult.Failed(MessageFormatter.GetMessage(entity));
+            if (Precondition == null || Precondition(entity))
+            {
+                var result = ValidateExprn(entity);
+                if (!result)
+                {
+                    return ValidationResult.Failed(MessageFormatter.GetMessage(entity));
+                }
+            }
+
+            return ValidationResult.Passed();
         }
     }
 }
