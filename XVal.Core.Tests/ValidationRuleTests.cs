@@ -50,8 +50,8 @@ namespace XVal.Core.Tests
             var employee = new Employee { Id = 1 };
             var rule = new ValidationRule<Employee>(e => true, new MessageFormatter<Employee>("Employee Id = {0}", e => e.Id), e => false);
             var result = rule.Execute(employee);
-            Assert.False(result);
-            Assert.Equal(string.Format("Employee Id = {0}", employee.Id), result.Message);
+            var expected = ValidationResult.Failed(string.Format(string.Format("Employee Id = {0}", employee.Id)));
+            Assert.Equal(expected, result);
         }
     }
 }
