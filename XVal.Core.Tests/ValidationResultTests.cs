@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 /// <summary>
@@ -64,6 +65,78 @@ namespace XVal.Core.Tests
                     new object[] { ValidationResult.Failed("Message"), ValidationResult.Passed(), ValidationResult.Failed("Message")},
                     new object[] { ValidationResult.Failed("Message1"), ValidationResult.Failed("Message2"), ValidationResult.Failed("Message1" + Environment.NewLine + "Message2")},
                 };
+            }
+        }
+
+        [Theory]
+        [MemberData(nameof(EqualsTestData))]
+        public void EqualsWorksCorrectly(ValidationResult result, object obj, bool expected)
+        {
+            Assert.Equal(expected, result.Equals(obj));
+        }
+
+        [Theory]
+        [MemberData(nameof(GenericEqualsTestData))]
+        public void GenericEqualsWorksCorrectly(ValidationResult result, ValidationResult other, bool expected)
+        {
+            Assert.Equal(expected, result.Equals(other));
+        }
+
+        [Theory]
+        [MemberData(nameof(GenericEqualsTestData))]
+        public void EqualsOperatorWorksCorrectly(ValidationResult result, ValidationResult other, bool expected)
+        {
+            Assert.Equal(expected, result == other);
+        }
+
+        [Theory]
+        [MemberData(nameof(GenericEqualsTestData))]
+        public void NotEqualsOperatorWorksCorrectly(ValidationResult result, ValidationResult other, bool oppositOfExpcted)
+        {
+            Assert.Equal(!oppositOfExpcted, result != other);
+        }
+
+        [Theory]
+        [MemberData(nameof(GetHashCodeData))]
+        public void GetHashCodeWorksCorrectly(ValidationResult result1, ValidationResult result2, bool shouldHashCodeEqual)
+        {
+            Assert.Equal(shouldHashCodeEqual, result1.GetHashCode() == result2.GetHashCode());
+        }
+
+        public static IEnumerable<object[]> EqualsTestData
+        {
+            get
+            {
+                return GenericEqualsTestData.Concat(new object[] { ValidationResult.Failed("Message1"), new object(), false }.ToEnumerable());
+            }
+        }
+
+        public static IEnumerable<object[]> GetHashCodeData
+        {
+            get
+            {
+                return GenericEqualsTestData.Concat(
+                    new[] {
+                        new object[]{ ValidationResult.Failed("Abcd"), ValidationResult.Failed("Abcd"), true },
+                        new object[]{ ValidationResult.Failed("abcd efgh"), ValidationResult.Failed("abcd efgh"), true },
+                        new object[]{ ValidationResult.Failed("some message"), ValidationResult.Failed("some message"), true },
+
+                        new object[]{ ValidationResult.Failed("Abcd"), ValidationResult.Failed("Xyz"), false },
+                        new object[]{ ValidationResult.Failed("abcd efgh"), ValidationResult.Failed("pqrs"), false },
+                        new object[]{ ValidationResult.Failed("some message"), ValidationResult.Failed("some other message"), false },
+                    });
+            }
+        }
+
+        public static IEnumerable<object[]> GenericEqualsTestData
+        {
+            get
+            {
+                yield return new object[] { ValidationResult.Passed(), ValidationResult.Passed(), true };
+                yield return new object[] { ValidationResult.Failed("Message"), ValidationResult.Failed("Message"), true };
+                yield return new object[] { ValidationResult.Passed(), ValidationResult.Failed("Message"), false };
+                yield return new object[] { ValidationResult.Failed("Message"), ValidationResult.Passed(), false };
+                yield return new object[] { ValidationResult.Failed("Message1"), ValidationResult.Failed("Message2"), false };
             }
         }
     }
