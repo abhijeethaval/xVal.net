@@ -11,8 +11,7 @@ namespace XVal.Core.Sample
     {
         static void Main(string[] args)
         {
-            var tests = new CompositeValidationRuleTests();
-            tests.ExecuteReturnsFailedWhenOneChildRuleReturnsFalse();
+           
         }
     }
 }
