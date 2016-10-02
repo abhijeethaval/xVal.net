@@ -1,5 +1,6 @@
 ﻿using System;
 using Xunit;
+using XVal.Core.Tests.TestData;
 
 namespace XVal.Core.Tests
 {
@@ -57,10 +58,5 @@ namespace XVal.Core.Tests
         }
     }
 
-    public class Employee
-    {
-        public int Id { get; set; }
-        public string Firstname { get; set; }
-        public string Lastname { get; set; }
-    }
+
 }

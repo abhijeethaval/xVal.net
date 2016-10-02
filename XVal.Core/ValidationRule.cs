@@ -8,6 +8,8 @@ namespace XVal.Core
             MessageFormatter<TEntity> messageFormatter,
             Predicate<TEntity> validateExprn)
         {
+            messageFormatter.ThrowIfArgumentNull(nameof(messageFormatter));
+            validateExprn.ThrowIfArgumentNull(nameof(validateExprn));
             Precondition = precondition;
             MessageFormatter = messageFormatter;
             ValidateExprn = validateExprn;
