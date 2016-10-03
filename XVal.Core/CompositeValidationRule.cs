@@ -23,18 +23,18 @@ namespace XVal.Core
 
         public ValidationResult Execute(TEntity entity)
         {
-            if (Precondition.SatisfiedBy(entity))
-            {
-                var childResult = ChildRules.Select(c => c.Execute(entity)).Aggregate(ValidationResult.Combine);
-                if (childResult)
-                {
-                    return ValidationResult.Passed();
-                }
+            return ValidationRuleHelper.Validate(entity, Precondition, ExecuteHelper);
+        }
 
-                return ValidationResult.Failed(MessageFormatter.GetMessage(entity) + Environment.NewLine + childResult.Message);
+        private ValidationResult ExecuteHelper(TEntity entity)
+        {
+            var childResult = ChildRules.Select(c => c.Execute(entity)).Aggregate(ValidationResult.Combine);
+            if (childResult)
+            {
+                return ValidationResult.Passed();
             }
 
-            return ValidationResult.Passed();
+            return ValidationResult.Failed(MessageFormatter.GetMessage(entity) + Environment.NewLine + childResult.Message);
         }
     }
 }

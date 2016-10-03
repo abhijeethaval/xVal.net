@@ -21,13 +21,15 @@ namespace XVal.Core
 
         public ValidationResult Execute(TEntity entity)
         {
-            if (Precondition.SatisfiedBy(entity))
+            return ValidationRuleHelper.Validate(entity, Precondition, ExecuteHelper);
+        }
+
+        private ValidationResult ExecuteHelper(TEntity entity)
+        {
+            var result = ValidateExprn(entity);
+            if (!result)
             {
-                var result = ValidateExprn(entity);
-                if (!result)
-                {
-                    return ValidationResult.Failed(MessageFormatter.GetMessage(entity));
-                }
+                return ValidationResult.Failed(MessageFormatter.GetMessage(entity));
             }
 
             return ValidationResult.Passed();
