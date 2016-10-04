@@ -53,6 +53,10 @@
       <Project>{3D19021B-7923-46C5-B3B4-B416B1EBF802}</Project>
       <Name>XVal.Core.Tests</Name>
     </ProjectReference>
+    <ProjectReference Include="..\XVal.Core\XVal.Core.csproj">
+      <Project>{9EFDBC68-9A37-4863-9621-9C7A71419D4E}</Project>
+      <Name>XVal.Core</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

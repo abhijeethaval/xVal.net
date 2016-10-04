@@ -1,38 +1,11 @@
-﻿using System;
-
-namespace XVal.Core
+﻿namespace XVal.Core.Sample
 {
-    public class ValidationRule<TEntity> : IValidationRule<TEntity>
+
+    public static class ValidationRule
     {
-        public ValidationRule(Predicate<TEntity> precondition,
-            MessageFormatter<TEntity> messageFormatter,
-            Predicate<TEntity> validateExprn)
+        public static ValidationRuleBuilderSelector<TEntity> For<TEntity>()
         {
-            messageFormatter.ThrowIfArgumentNull(nameof(messageFormatter));
-            validateExprn.ThrowIfArgumentNull(nameof(validateExprn));
-            Precondition = precondition;
-            MessageFormatter = messageFormatter;
-            ValidateExprn = validateExprn;
-        }
-
-        public Predicate<TEntity> Precondition { get; }
-        public Predicate<TEntity> ValidateExprn { get; }
-        MessageFormatter<TEntity> MessageFormatter { get; }
-
-        public ValidationResult Execute(TEntity entity)
-        {
-            return ValidationRuleHelper.Validate(entity, Precondition, ExecuteHelper);
-        }
-
-        private ValidationResult ExecuteHelper(TEntity entity)
-        {
-            var result = ValidateExprn(entity);
-            if (!result)
-            {
-                return ValidationResult.Failed(MessageFormatter.GetMessage(entity));
-            }
-
-            return ValidationResult.Passed();
+            throw new System.NotImplementedException();
         }
     }
 }
