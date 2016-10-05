@@ -19,7 +19,7 @@ namespace XVal.Core
 
         public Predicate<TEntity> Precondition { get; }
         public IEnumerable<IValidationRule<TEntity>> ChildRules { get; }
-        MessageFormatter<TEntity> MessageFormatter { get; }
+        public MessageFormatter<TEntity> MessageFormatter { get; }
 
         public ValidationResult Execute(TEntity entity)
         {
