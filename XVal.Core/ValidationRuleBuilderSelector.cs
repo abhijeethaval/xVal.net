@@ -2,16 +2,21 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 
-namespace XVal.Core.Sample
+namespace XVal.Core
 {
     public class ValidationRuleBuilderSelector<TEntity>
     {
+        internal ValidationRuleBuilderSelector()
+        {
+
+        }
+
         public ChildValidationRuleBuilder<TEntity, TChild> ForChild<TChild>(Expression<Func<TEntity, TChild>> ChildExprn)
         {
             throw new NotImplementedException();
         }
 
-        public ChildrenValidationRuleBuilder<TEntity, TChild> ForChildren<TChild>(Expression<Func<TEntity, IEnumerable<TChild>>> childrenExprn)
+        public CollectionChildValidationRuleBuilder<TEntity, TChild> ForChildren<TChild>(Expression<Func<TEntity, IEnumerable<TChild>>> childrenExprn)
         {
             throw new NotImplementedException();
         }

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace XVal.Core.Sample
+namespace XVal.Core
 {
 
     public class CompositeValidationRuleBuilder<TEntity>

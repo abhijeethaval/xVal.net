@@ -1,11 +1,10 @@
-﻿namespace XVal.Core.Sample
+﻿namespace XVal.Core
 {
-
     public static class ValidationRule
     {
         public static ValidationRuleBuilderSelector<TEntity> For<TEntity>()
         {
-            throw new System.NotImplementedException();
+            return new ValidationRuleBuilderSelector<TEntity>();
         }
     }
 }
