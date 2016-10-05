@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace XVal.Core
@@ -14,7 +15,7 @@ namespace XVal.Core
 
         public string Format { get; }
 
-        public Func<TEntity, object>[] Arguments { get; }
+        public IEnumerable<Func<TEntity, object>> Arguments { get; }
 
         public string GetMessage(TEntity entity)
         {

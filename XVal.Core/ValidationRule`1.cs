@@ -17,7 +17,7 @@ namespace XVal.Core
 
         public Predicate<TEntity> Precondition { get; }
         public Predicate<TEntity> ValidateExprn { get; }
-        MessageFormatter<TEntity> MessageFormatter { get; }
+        public MessageFormatter<TEntity> MessageFormatter { get; }
 
         public ValidationResult Execute(TEntity entity)
         {

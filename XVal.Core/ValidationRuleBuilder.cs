@@ -5,6 +5,9 @@ namespace XVal.Core
     public class ValidationRuleBuilder<TEntity>
     {
         private Predicate<TEntity> _validateExpn;
+        private Predicate<TEntity> _precondition;
+        private Func<TEntity, object>[] _formatParameters;
+        private string _format;
 
         public ValidationRuleBuilder(Predicate<TEntity> validateExpn)
         {
@@ -13,18 +16,23 @@ namespace XVal.Core
 
         public ValidationRuleBuilder<TEntity> When(Predicate<TEntity> precondition)
         {
-            throw new NotImplementedException();
+            _precondition = precondition;
+            return this;
         }
 
         public ValidationRuleBuilder<TEntity> Message(string format,
             params Func<TEntity, object>[] formatParameters)
         {
-            throw new NotImplementedException();
+            _format = format;
+            _formatParameters = formatParameters;
+            return this;
         }
 
         public ValidationRule<TEntity> Build()
         {
-            return null;
+            return new ValidationRule<TEntity>(_precondition,
+                new MessageFormatter<TEntity>(_format, _formatParameters),
+                _validateExpn);
         }
 
         public static implicit operator ValidationRule<TEntity>(ValidationRuleBuilder<TEntity> builder)
