@@ -5,6 +5,13 @@ namespace XVal.Core
 
     public class CompositeValidationRuleBuilder<TEntity>
     {
+        private IValidationRule<TEntity>[] _childRules;
+
+        public CompositeValidationRuleBuilder(IValidationRule<TEntity>[] childRules)
+        {
+            _childRules = childRules;
+        }
+
         public CompositeValidationRuleBuilder<TEntity> When(Predicate<TEntity> precondition)
         {
             throw new NotImplementedException();

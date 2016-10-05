@@ -4,6 +4,13 @@ namespace XVal.Core
 {
     public class ValidationRuleBuilder<TEntity>
     {
+        private Predicate<TEntity> _validateExpn;
+
+        public ValidationRuleBuilder(Predicate<TEntity> validateExpn)
+        {
+            _validateExpn = validateExpn;
+        }
+
         public ValidationRuleBuilder<TEntity> When(Predicate<TEntity> precondition)
         {
             throw new NotImplementedException();

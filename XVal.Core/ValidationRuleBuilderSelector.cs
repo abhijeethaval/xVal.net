@@ -13,22 +13,22 @@ namespace XVal.Core
 
         public ChildValidationRuleBuilder<TEntity, TChild> ForChild<TChild>(Expression<Func<TEntity, TChild>> ChildExprn)
         {
-            throw new NotImplementedException();
+            return new ChildValidationRuleBuilder<TEntity, TChild>(ChildExprn);
         }
 
         public CollectionChildValidationRuleBuilder<TEntity, TChild> ForChildren<TChild>(Expression<Func<TEntity, IEnumerable<TChild>>> childrenExprn)
         {
-            throw new NotImplementedException();
+            return new CollectionChildValidationRuleBuilder<TEntity, TChild>(childrenExprn);
         }
 
         public ValidationRuleBuilder<TEntity> Validate(Predicate<TEntity> validateExpn)
         {
-            throw new NotImplementedException();
+            return new ValidationRuleBuilder<TEntity>(validateExpn);
         }
 
         public CompositeValidationRuleBuilder<TEntity> Validate(params IValidationRule<TEntity>[] childRules)
         {
-            throw new NotImplementedException();
+            return new CompositeValidationRuleBuilder<TEntity>(childRules);
         }
     }
 }

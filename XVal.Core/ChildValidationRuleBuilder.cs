@@ -1,9 +1,17 @@
 ﻿using System;
+using System.Linq.Expressions;
 
 namespace XVal.Core
 {
     public class ChildValidationRuleBuilder<TEntity, TChild>
     {
+        private Expression<Func<TEntity, TChild>> _childExprn;
+
+        public ChildValidationRuleBuilder(Expression<Func<TEntity, TChild>> childExprn)
+        {
+            _childExprn = childExprn;
+        }
+
         public ChildValidationRuleBuilder<TEntity, TChild> Validate(IValidationRule<TChild> addressRule)
         {
             throw new NotImplementedException();
