@@ -21,9 +21,9 @@ namespace XVal.Core
         }
 
         public Predicate<TEntity> Precondition { get; }
-        MessageFormatter<TEntity> MessageFormatter { get; }
-        Func<TEntity, IEnumerable<TChild>> Collection { get; }
-        IValidationRule<TChild> ChildValidationRule { get; }
+        public MessageFormatter<TEntity> MessageFormatter { get; }
+        public Func<TEntity, IEnumerable<TChild>> Collection { get; }
+        public IValidationRule<TChild> ChildValidationRule { get; }
 
         public ValidationResult Execute(TEntity entity)
         {

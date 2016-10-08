@@ -65,6 +65,7 @@
   <ItemGroup>
     <Compile Include="ChildValidationRuleBuilderTests.cs" />
     <Compile Include="ChildValidationRuleTests.cs" />
+    <Compile Include="CollectionChildValidationRuleBuilderTests.cs" />
     <Compile Include="CollectionChildValidationRuleTests.cs" />
     <Compile Include="CompositeValidationRuleBuilderTests.cs" />
     <Compile Include="CompositeValidationRuleTests.cs" />
