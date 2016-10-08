@@ -40,6 +40,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChildValidationRule.cs" />
     <Compile Include="CollectionChildValidationRuleBuilder.cs" />
     <Compile Include="ChildValidationRuleBuilder.cs" />
     <Compile Include="CompositeValidationRule.cs" />

@@ -39,7 +39,6 @@ namespace XVal.Core.Tests
             var expected = ValidationResult.Failed(GetEmployeeNameFormatter().GetMessage(employee)
                 + Environment.NewLine
                 + GetEmployeeIdFormatter().GetMessage(employee));
-            //Assert.Equal(expected, result);
             Assert.Equal(expected.Result, result.Result);
             Assert.Equal(expected.Message, result.Message);
         }
