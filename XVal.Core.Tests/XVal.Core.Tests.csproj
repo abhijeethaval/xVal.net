@@ -63,6 +63,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChildValidationRuleBuilderTests.cs" />
     <Compile Include="ChildValidationRuleTests.cs" />
     <Compile Include="CompositeValidationRuleBuilderTests.cs" />
     <Compile Include="CompositeValidationRuleTests.cs" />

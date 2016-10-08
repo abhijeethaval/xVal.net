@@ -11,7 +11,7 @@ namespace XVal.Core
 
         }
 
-        public ChildValidationRuleBuilder<TEntity, TChild> ForChild<TChild>(Expression<Func<TEntity, TChild>> ChildExprn)
+        public ChildValidationRuleBuilder<TEntity, TChild> ForChild<TChild>(Func<TEntity, TChild> ChildExprn)
         {
             return new ChildValidationRuleBuilder<TEntity, TChild>(ChildExprn);
         }
