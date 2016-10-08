@@ -26,7 +26,7 @@ namespace XVal.Core
         public ValidationResult Execute(TEntity entity)
         {
             return ValidationRuleHelper.Validate(entity,
-                Precondition, 
+                Precondition,
                 ExecuteHelper);
         }
 
@@ -37,12 +37,9 @@ namespace XVal.Core
             if (child != null)
             {
                 childResult = InternalValidationRule.Execute(child);
-                if (childResult)
-                {
-                    return ValidationResult.Passed();
-                }
-
-                return ValidationResult.Failed(MessageFormatter.GetMessage(entity) + Environment.NewLine + childResult.Message);
+                return childResult
+                    ? ValidationResult.Passed()
+                    : ValidationResult.Failed(MessageFormatter.GetMessage(entity) + Environment.NewLine + childResult.Message);
             }
 
             return ValidationResult.Passed();
