@@ -1,6 +1,5 @@
 ﻿using NSubstitute;
 using Xunit;
-using XVal.Core;
 using XVal.Core.Tests.TestData;
 
 namespace XVal.Core.Tests
