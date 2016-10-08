@@ -1,4 +1,5 @@
-﻿using System;
+﻿using NSubstitute;
+using System;
 using Xunit;
 using XVal.Core.Tests.TestData;
 
@@ -21,9 +22,21 @@ namespace XVal.Core.Tests
         }
 
         [Fact]
-        public void ExecuteReturnsPassedWhenPreconditionReturnsFalse()
+        public void ExecuteReturnsPassedWhenPreconditionIsFalse()
         {
-            var rule = new CompositeValidationRule<Employee>(e => false, GetEmployeeIdFormatter(), GetPassingValidationRule().ToEnumerable());
+            var rule = new CompositeValidationRule<Employee>(e => false,
+                Substitute.For<MessageFormatter<Employee>>("Message"),
+                GetFailingValidationRule().ToEnumerable());
+            var result = rule.Execute(GetEmployee());
+            Assert.True(result);
+        }
+
+        [Fact]
+        public void ExecuteReturnsPassedWhenChildRuleReturnsPassed()
+        {
+            var rule = new CompositeValidationRule<Employee>(e => true, 
+                GetEmployeeIdFormatter(),
+                GetPassingValidationRule().ToEnumerable());
             var result = rule.Execute(GetEmployee());
             Assert.True(result);
         }

@@ -41,6 +41,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ChildValidationRule.cs" />
+    <Compile Include="CollectionChildValidationRule.cs" />
     <Compile Include="CollectionChildValidationRuleBuilder.cs" />
     <Compile Include="ChildValidationRuleBuilder.cs" />
     <Compile Include="CompositeValidationRule.cs" />

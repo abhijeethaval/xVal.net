@@ -40,31 +40,15 @@ namespace XVal.Core.Tests
         }
 
         [Fact]
-        public void ExecuteReturnsPassedWhenPreconditionReturnsFalse()
+        public void ExecuteReturnsPassedWhenPreconditionIsFalse()
         {
-            var rule = new ChildValidationRule<Employee, Address>(null,
+            var rule = new ChildValidationRule<Employee, Address>(e => false,
                 Substitute.For<MessageFormatter<Employee>>("dummyMessage"),
-                Substitute.For<Func<Employee, Address>>(),
-                Substitute.For<IValidationRule<Address>>());
+                e => e.Address,
+                GetFailingValidationRule());
 
             var result = rule.Execute(GetEmployee());
             Assert.True(result);
-        }
-
-        [Fact]
-        public void ExecuteReturnFailWhenChildRuleFails()
-        {
-            var employee = GetEmployee();
-            var rule = new ChildValidationRule<Employee, Address>(e => true,
-                GetEmployeeIdFormatter(),
-                e => e.Address,
-                GetFailingValidationRule());
-            var result = rule.Execute(employee);
-            var expected = ValidationResult.Failed(GetEmployeeIdFormatter().GetMessage(employee)
-                + Environment.NewLine
-                + GetCityFormatter().GetMessage(employee.Address));
-            Assert.Equal(expected.Result, result.Result);
-            Assert.Equal(expected.Message, result.Message);
         }
 
         [Fact]
@@ -90,7 +74,22 @@ namespace XVal.Core.Tests
                 GetPassingValidationRule());
             var result = rule.Execute(employee);
             Assert.True(result);
+        }
 
+        [Fact]
+        public void ExecuteReturnFailWhenChildRuleFails()
+        {
+            var employee = GetEmployee();
+            var rule = new ChildValidationRule<Employee, Address>(e => true,
+                GetEmployeeIdFormatter(),
+                e => e.Address,
+                GetFailingValidationRule());
+            var result = rule.Execute(employee);
+            var expected = ValidationResult.Failed(GetEmployeeIdFormatter().GetMessage(employee)
+                + Environment.NewLine
+                + GetCityFormatter().GetMessage(employee.Address));
+            Assert.Equal(expected.Result, result.Result);
+            Assert.Equal(expected.Message, result.Message);
         }
 
         private static MessageFormatter<Employee> GetEmployeeIdFormatter()
