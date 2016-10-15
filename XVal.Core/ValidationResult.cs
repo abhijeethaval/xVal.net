@@ -8,10 +8,7 @@ namespace XVal.Core
 
         public string Message { get; }
 
-        public static ValidationResult Passed()
-        {
-            return new ValidationResult(true, null);
-        }
+        public static ValidationResult Passed() => new ValidationResult(true, null);
 
         public static ValidationResult Failed(string message)
         {
@@ -64,15 +61,9 @@ namespace XVal.Core
             return other.Result == Result && other.Message == Message;
         }
 
-        public static bool operator ==(ValidationResult a, ValidationResult b)
-        {
-            return a.Equals(b);
-        }
+        public static bool operator ==(ValidationResult a, ValidationResult b) => a.Equals(b);
 
-        public static bool operator !=(ValidationResult a, ValidationResult b)
-        {
-            return !(a == b);
-        }
+        public static bool operator !=(ValidationResult a, ValidationResult b) => !(a == b);
 
         public override int GetHashCode()
         {
@@ -89,9 +80,6 @@ namespace XVal.Core
             }
         }
 
-        public static implicit operator bool(ValidationResult result)
-        {
-            return result.Result;
-        }
+        public static implicit operator bool(ValidationResult result) => result.Result;
     }
 }
