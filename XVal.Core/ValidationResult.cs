@@ -71,11 +71,7 @@ namespace XVal.Core
             {
                 int hash = 17;
                 hash = hash * 23 + Result.GetHashCode();
-                if (Message != null)
-                {
-                    hash = hash * 23 + Message.GetHashCode();
-                }
-
+                hash = hash * 23 + Message?.GetHashCode() ?? 0;
                 return hash;
             }
         }

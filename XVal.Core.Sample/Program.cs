@@ -44,7 +44,7 @@ namespace XVal.Core.Sample
                 .ForChildren(e => e.ContactNumbers)
                 .Validate(contactNumberRule)
                 .When(e => e.Id != null)
-                .Message("")
+                .Message("some message")
                 .Build();
         }
     }

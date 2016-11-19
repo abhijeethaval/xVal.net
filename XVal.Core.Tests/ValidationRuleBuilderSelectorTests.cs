@@ -17,7 +17,7 @@ namespace XVal.Core.Tests
         public void ReturnsValidationRuleBuilder()
         {
             var actual = ValidationRule.For<Employee>()
-                .Validate(e => e.Id != null);
+                .Validate(e => e.Id.HasValue);
             Assert.IsType<ValidationRuleBuilder<Employee>>(actual);
         }
 
