@@ -1,4 +1,4 @@
-*# What is it?
+# What is it?
 xVal.net is a fluent validation library for .NET. It is designed to be flexible.
 It allows specifying the validation rules for the .NET objects using fluent API. 
 There are three types of validation rules which can be created.
@@ -53,7 +53,7 @@ Following example shows usage of the framework
                  .Message("Firstname is mandatory. Employee Id = {0}", e => e.Id)
                  .Build();
 ```
-* Example of ChildValidationRule<TEntity>
+* Example of ChildValidationRule<TEntity, TChild>
 Here we are creating rule for validating that City property of an address of an employee is required field.
 ```
             var addressRule = ValidationRule.For<Address>()
@@ -66,5 +66,20 @@ Here we are creating rule for validating that City property of an address of an 
                 .Validate(addressRule)
                 .When(e => e.Id != null)
                 .Message("Employee Id = {0}", e => e.Id)
+                .Build();
+```
+* Example of CollectionChildValidationRule<TEntitiy, TChild>
+Here we are creating rule for validating that the Number property of each of multiple contacts is required.
+```
+            var contactNumberRule = ValidationRule.For<PhoneNumber>()
+                .Validate(p => p.Number != null)
+                .Message("Phone number is required.")
+                .Build();
+
+            var enumerableChildrenRule = ValidationRule.For<Employee>()
+                .ForChildren(e => e.ContactNumbers)
+                .Validate(contactNumberRule)
+                .When(e => e.Id != null)
+                .Message("some message")
                 .Build();
 ```
