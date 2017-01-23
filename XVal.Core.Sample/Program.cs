@@ -9,7 +9,7 @@ namespace XVal.Core.Sample
             var firstnameRule = ValidationRule.For<Employee>()
                  .Validate(e => e.Firstname != null)
                  .When(e => e.Id != null)
-                 .Message("Firstname is mandatory. Employee Id = {0}", e => e.Id)
+                 .Message("Firstname is mandatory. Id = {0}", e => e.Id)
                  .Build();
 
             var lastnameRule = ValidationRule.For<Employee>()
