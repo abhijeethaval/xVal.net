@@ -23,7 +23,7 @@ namespace XVal.Core.Tests
             Assert.Equal(expectedRule.MessageFormatter.Arguments.Count(), rule.MessageFormatter.Arguments.Count());
             foreach (var expectedArgument in expectedRule.MessageFormatter.Arguments)
             {
-                Assert.True(rule.MessageFormatter.Arguments.Any(a => a(employee) == expectedArgument(employee)));
+                Assert.Contains(rule.MessageFormatter.Arguments, a => a(employee) == expectedArgument(employee));
             }
         }
 
