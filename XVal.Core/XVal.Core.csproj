@@ -2,6 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <PackageId>XVal</PackageId>
+    <Authors>Abhijeet Haval</Authors>
+    <Company />
+    <Product>XVal.net</Product>
+    <Description>xVal.net is a fluent validation library for .NET. It is designed to be flexible. It allows specifying the validation rules for the .NET objects using fluent API.</Description>
   </PropertyGroup>
 
 </Project>
