@@ -5,7 +5,7 @@ namespace XVal.Core
 {
     public class CompositeValidationRuleBuilder<TEntity>
     {
-        private IEnumerable<IValidationRule<TEntity>> _childRules;
+        private readonly IEnumerable<IValidationRule<TEntity>> _childRules;
         private Predicate<TEntity> _precondition;
         private string _format;
         private Func<TEntity, object>[] _formatParameters;

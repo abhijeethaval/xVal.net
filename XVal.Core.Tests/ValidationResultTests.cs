@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using Xunit;
 
+#pragma warning disable 1587
 /// <summary>
 /// packages\xunit.runner.console.2.1.0\tools\xunit.console.exe XVal.Core.Tests\bin\Debug\XVal.Core.Tests.dll
 /// </summary>
+#pragma warning restore 1587
 namespace XVal.Core.Tests
 {
     public class ValidationResultTests
@@ -54,19 +56,13 @@ namespace XVal.Core.Tests
             Assert.Equal(expected.Message, combined.Message);
         }
 
-        public static IEnumerable<object[]> CombineResultsData
+        public static IEnumerable<object[]> CombineResultsData => new[]
         {
-            get
-            {
-                return new[]
-                {
-                    new object[] { ValidationResult.Passed(), ValidationResult.Passed(), ValidationResult.Passed()},
-                    new object[] { ValidationResult.Passed(), ValidationResult.Failed("Message"), ValidationResult.Failed("Message")},
-                    new object[] { ValidationResult.Failed("Message"), ValidationResult.Passed(), ValidationResult.Failed("Message")},
-                    new object[] { ValidationResult.Failed("Message1"), ValidationResult.Failed("Message2"), ValidationResult.Failed("Message1" + Environment.NewLine + "Message2")},
-                };
-            }
-        }
+            new object[] { ValidationResult.Passed(), ValidationResult.Passed(), ValidationResult.Passed()},
+            new object[] { ValidationResult.Passed(), ValidationResult.Failed("Message"), ValidationResult.Failed("Message")},
+            new object[] { ValidationResult.Failed("Message"), ValidationResult.Passed(), ValidationResult.Failed("Message")},
+            new object[] { ValidationResult.Failed("Message1"), ValidationResult.Failed("Message2"), ValidationResult.Failed("Message1" + Environment.NewLine + "Message2")},
+        };
 
         [Theory]
         [MemberData(nameof(EqualsTestData))]
@@ -103,30 +99,18 @@ namespace XVal.Core.Tests
             Assert.Equal(shouldHashCodeEqual, result1.GetHashCode() == result2.GetHashCode());
         }
 
-        public static IEnumerable<object[]> EqualsTestData
-        {
-            get
-            {
-                return GenericEqualsTestData.Concat(new object[] { ValidationResult.Failed("Message1"), new object(), false }.ToEnumerable());
-            }
-        }
+        public static IEnumerable<object[]> EqualsTestData => GenericEqualsTestData.Concat(new[] { ValidationResult.Failed("Message1"), new object(), false }.ToEnumerable());
 
-        public static IEnumerable<object[]> GetHashCodeData
-        {
-            get
-            {
-                return GenericEqualsTestData.Concat(
-                    new[] {
-                        new object[]{ ValidationResult.Failed("Abcd"), ValidationResult.Failed("Abcd"), true },
-                        new object[]{ ValidationResult.Failed("abcd efgh"), ValidationResult.Failed("abcd efgh"), true },
-                        new object[]{ ValidationResult.Failed("some message"), ValidationResult.Failed("some message"), true },
+        public static IEnumerable<object[]> GetHashCodeData => GenericEqualsTestData.Concat(
+            new[] {
+                new object[]{ ValidationResult.Failed("Abcd"), ValidationResult.Failed("Abcd"), true },
+                new object[]{ ValidationResult.Failed("abcd efgh"), ValidationResult.Failed("abcd efgh"), true },
+                new object[]{ ValidationResult.Failed("some message"), ValidationResult.Failed("some message"), true },
 
-                        new object[]{ ValidationResult.Failed("Abcd"), ValidationResult.Failed("Xyz"), false },
-                        new object[]{ ValidationResult.Failed("abcd efgh"), ValidationResult.Failed("pqrs"), false },
-                        new object[]{ ValidationResult.Failed("some message"), ValidationResult.Failed("some other message"), false },
-                    });
-            }
-        }
+                new object[]{ ValidationResult.Failed("Abcd"), ValidationResult.Failed("Xyz"), false },
+                new object[]{ ValidationResult.Failed("abcd efgh"), ValidationResult.Failed("pqrs"), false },
+                new object[]{ ValidationResult.Failed("some message"), ValidationResult.Failed("some other message"), false },
+            });
 
         public static IEnumerable<object[]> GenericEqualsTestData
         {

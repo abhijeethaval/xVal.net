@@ -5,7 +5,7 @@ namespace XVal.Core
 {
     public class CollectionChildValidationRuleBuilder<TEntity, TChild>
     {
-        private Func<TEntity, IEnumerable<TChild>> _childrenExprn;
+        private readonly Func<TEntity, IEnumerable<TChild>> _childrenExprn;
         private IValidationRule<TChild> _childRule;
         private Predicate<TEntity> _precondition;
         private string _messageFormat;

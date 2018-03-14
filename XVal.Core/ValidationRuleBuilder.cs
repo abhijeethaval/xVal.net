@@ -4,7 +4,7 @@ namespace XVal.Core
 {
     public class ValidationRuleBuilder<TEntity>
     {
-        private Predicate<TEntity> _validateExpn;
+        private readonly Predicate<TEntity> _validateExpn;
         private Predicate<TEntity> _precondition;
         private Func<TEntity, object>[] _formatParameters;
         private string _format;

@@ -39,7 +39,7 @@ namespace XVal.Core
                 return result1;
             }
 
-            return Failed(result1.Message + System.Environment.NewLine + result2.Message);
+            return Failed(result1.Message + Environment.NewLine + result2.Message);
         }
 
         public override bool Equals(object obj)

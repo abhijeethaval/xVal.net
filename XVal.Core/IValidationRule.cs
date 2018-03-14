@@ -1,6 +1,6 @@
 ﻿namespace XVal.Core
 {
-    public interface IValidationRule<TEntity>
+    public interface IValidationRule<in TEntity>
     {
         ValidationResult Execute(TEntity entity);
     }   

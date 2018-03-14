@@ -33,16 +33,12 @@ namespace XVal.Core
         private ValidationResult ExecuteHelper(TEntity entity)
         {
             var child = ChildExprn.Invoke(entity);
-            ValidationResult childResult;
-            if (child != null)
-            {
-                childResult = InternalValidationRule.Execute(child);
-                return childResult
-                    ? ValidationResult.Passed()
-                    : ValidationResult.Failed(MessageFormatter.GetMessage(entity) + Environment.NewLine + childResult.Message);
-            }
+            if (child == null) return ValidationResult.Passed();
+            var childResult = InternalValidationRule.Execute(child);
+            return childResult
+                ? ValidationResult.Passed()
+                : ValidationResult.Failed(MessageFormatter.GetMessage(entity) + Environment.NewLine + childResult.Message);
 
-            return ValidationResult.Passed();
         }
     }
 }
