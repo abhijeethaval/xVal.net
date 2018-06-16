@@ -6,19 +6,21 @@ namespace XVal.Core.Sample
     {
         static void Main(string[] args)
         {
-            var firstnameRule = ValidationRule.For<Employee>()
+            var employeeRuleBuilder = ValidationRule.For<Employee>();
+
+            var firstnameRule = employeeRuleBuilder
                  .Validate(e => e.Firstname != null)
                  .When(e => e.Id != null)
                  .Message("Firstname is mandatory. Id = {0}", e => e.Id)
                  .Build();
 
-            var lastnameRule = ValidationRule.For<Employee>()
+            var lastnameRule = employeeRuleBuilder
                 .Validate(e => e.Lastname != null)
                  .When(e => e.Id != null)
                 .Message("Lastname is mandatory. I.When(e => e.Id != null)d = {0}", e => e.Id)
                 .Build();
 
-            var compositeRule = ValidationRule.For<Employee>()
+            var compositeRule = employeeRuleBuilder
                 .Validate(firstnameRule, lastnameRule)
                 .When(e => e.Id != null)
                 .Message("Validations failed. Id = {0}, Firstname = {1}", e => e.Id, e => e.Firstname);
@@ -28,7 +30,7 @@ namespace XVal.Core.Sample
                 .Message("City is required.")
                 .Build();
 
-            var propertyRule = ValidationRule.For<Employee>()
+            var propertyRule = employeeRuleBuilder
                 .ForChild(e => e.Address)
                 .Validate(addressRule)
                 .When(e => e.Id != null)
@@ -40,7 +42,7 @@ namespace XVal.Core.Sample
                 .Message("Phone number is required.")
                 .Build();
 
-            var enumerableChildrenRule = ValidationRule.For<Employee>()
+            var enumerableChildrenRule = employeeRuleBuilder
                 .ForChildren(e => e.ContactNumbers)
                 .Validate(contactNumberRule)
                 .When(e => e.Id != null)
