@@ -19,35 +19,59 @@ namespace XVal.Core.Tests
         }
 
         [Fact]
-        public void ConstructorThrowsIfMessageFormatterIsNull()
+        public void ConstructorThrowsIfMessageFormatIsNull()
         {
-            var exception = Assert.Throws<ArgumentNullException>(() => new ChildValidationRule<Employee, Address>(null, null, Substitute.For<Func<Employee, Address>>(), Substitute.For<IValidationRule<Address>>()));
-            Assert.Equal("Value cannot be null." + Environment.NewLine + "Parameter name: messageFormatter", exception.Message);
+            var addressRule = ValidationRule.For<Address>()
+                .Validate(a => true)
+                .Message("Error message")
+                .Build();
+            var employeeRuleBuilder = ValidationRule.For<Employee>()
+                .ForChild(e => e.Address)
+                .Validate(addressRule)
+                .Message(null);
+            var exception = Assert.Throws<ArgumentNullException>(() => employeeRuleBuilder.Build());
+            Assert.Equal("Value cannot be null." + Environment.NewLine + "Parameter name: format", exception.Message);
         }
 
         [Fact]
         public void ConstructorThrowsIfChildExpressionIsNull()
         {
-            var exception = Assert.Throws<ArgumentNullException>(() => new ChildValidationRule<Employee, Address>(null, Substitute.For<MessageFormatter<Employee>>("dummyMessage"), null, Substitute.For<IValidationRule<Address>>()));
+            var addressRule = ValidationRule.For<Address>()
+                .Validate(a => true)
+                .Message("Error message")
+                .Build();
+            var employeeRuleBuilder = ValidationRule.For<Employee>()
+                .ForChild<Address>(null)
+                .Validate(addressRule)
+                .Message("Error message");
+            var exception = Assert.Throws<ArgumentNullException>(() => employeeRuleBuilder.Build());
             Assert.Equal("Value cannot be null." + Environment.NewLine + "Parameter name: childExprn", exception.Message);
         }
 
         [Fact]
         public void ConstructorThrowsIfChildValidationRuleIsNull()
         {
-            var exception = Assert.Throws<ArgumentNullException>(() => new ChildValidationRule<Employee, Address>(null, Substitute.For<MessageFormatter<Employee>>("dummyMessage"), Substitute.For<Func<Employee, Address>>(), null));
+            var employeeRuleBuilder = ValidationRule.For<Employee>()
+                .ForChild(e => e.Address)
+                .Validate(null)
+                .Message("Error message");
+            var exception = Assert.Throws<ArgumentNullException>(() => employeeRuleBuilder.Build());
             Assert.Equal("Value cannot be null." + Environment.NewLine + "Parameter name: childValidationRule", exception.Message);
         }
 
         [Fact]
         public void ExecuteReturnsPassedWhenPreconditionIsFalse()
         {
-            var rule = new ChildValidationRule<Employee, Address>(e => false,
-                Substitute.For<MessageFormatter<Employee>>("dummyMessage"),
-                e => e.Address,
-                GetFailingValidationRule());
-
-            var result = rule.Execute(GetEmployee());
+            var addressRule = ValidationRule.For<Address>()
+                .Validate(a => true)
+                .Message("Error message")
+                .Build();
+            var employeeRuleBuilder = ValidationRule.For<Employee>()
+                .ForChild(e => e.Address)
+                .When(e => false)
+                .Validate(addressRule)
+                .Message("Error message");
+            var result = employeeRuleBuilder.Build().Execute(GetEmployee());
             Assert.True(result);
         }
 
@@ -56,23 +80,30 @@ namespace XVal.Core.Tests
         {
             var employee = GetEmployee();
             employee.Address = null;
-            var rule = new ChildValidationRule<Employee, Address>(e => true,
-                GetEmployeeIdFormatter(),
-                e => e.Address,
-                GetFailingValidationRule());
-            var result = rule.Execute(employee);
+            var addressRule = ValidationRule.For<Address>()
+                .Validate(a => false)
+                .Message("Error message")
+                .Build();
+            var employeeRuleBuilder = ValidationRule.For<Employee>()
+                .ForChild(e => e.Address)
+                .Validate(addressRule)
+                .Message("Error message");
+            var result = employeeRuleBuilder.Build().Execute(employee);
             Assert.True(result);
         }
 
         [Fact]
         public void ExecuteReturnPassedWhenChildRulePasses()
         {
-            var employee = GetEmployee();
-            var rule = new ChildValidationRule<Employee, Address>(e => true,
-                GetEmployeeIdFormatter(),
-                e => e.Address,
-                GetPassingValidationRule());
-            var result = rule.Execute(employee);
+            var addressRule = ValidationRule.For<Address>()
+                .Validate(a => true)
+                .Message("Error message")
+                .Build();
+            var employeeRuleBuilder = ValidationRule.For<Employee>()
+                .ForChild(e => e.Address)
+                .Validate(addressRule)
+                .Message("Error message");
+            var result = employeeRuleBuilder.Build().Execute(GetEmployee());
             Assert.True(result);
         }
 
@@ -80,36 +111,20 @@ namespace XVal.Core.Tests
         public void ExecuteReturnFailWhenChildRuleFails()
         {
             var employee = GetEmployee();
-            var rule = new ChildValidationRule<Employee, Address>(e => true,
-                GetEmployeeIdFormatter(),
-                e => e.Address,
-                GetFailingValidationRule());
-            var result = rule.Execute(employee);
-            var expected = ValidationResult.Failed(GetEmployeeIdFormatter().GetMessage(employee)
+            var addressRule = ValidationRule.For<Address>()
+                .Validate(a => false)
+                .Message("City = {0}", a => a.City)
+                .Build();
+            var employeeRuleBuilder = ValidationRule.For<Employee>()
+                .ForChild(e => e.Address)
+                .Validate(addressRule)
+                .Message("Employee Id = {0}", e => e.Id);
+            var result = employeeRuleBuilder.Build().Execute(employee);
+            var expected = ValidationResult.Failed($"Employee Id = {employee.Id}"
                 + Environment.NewLine
-                + GetCityFormatter().GetMessage(employee.Address));
+                + $"City = {employee.Address.City}");
             Assert.Equal(expected.Result, result.Result);
             Assert.Equal(expected.Message, result.Message);
-        }
-
-        private static MessageFormatter<Employee> GetEmployeeIdFormatter()
-        {
-            return new MessageFormatter<Employee>("Employee Id = {0}", e => e.Id);
-        }
-
-        private static MessageFormatter<Address> GetCityFormatter()
-        {
-            return new MessageFormatter<Address>("City = {0}", a => a.City);
-        }
-
-        private static ValidationRule<Address> GetPassingValidationRule()
-        {
-            return new ValidationRule<Address>(null, GetCityFormatter(), e => true);
-        }
-
-        private static ValidationRule<Address> GetFailingValidationRule()
-        {
-            return new ValidationRule<Address>(null, GetCityFormatter(), e => false);
         }
 
         private Employee GetEmployee()
