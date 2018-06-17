@@ -21,35 +21,58 @@ namespace XVal.Core.Tests
         }
 
         [Fact]
-        public void ConstructorThrowsIfMessageFormatterIsNull()
+        public void ConstructorThrowsIfMessageFormatIsNull()
         {
-            var exception = Assert.Throws<ArgumentNullException>(() => new CollectionChildValidationRule<Employee, PhoneNumber>(null, null, e => e.ContactNumbers, Substitute.For<IValidationRule<PhoneNumber>>()));
-            Assert.Equal("Value cannot be null." + Environment.NewLine + "Parameter name: messageFormatter", exception.Message);
+            var phoneNumberRule = ValidationRule.For<PhoneNumber>()
+                .Validate(p => true)
+                .Message("Error message")
+                .Build();
+            var employeeRule = ValidationRule.For<Employee>()
+                .ForChildren(e => e.ContactNumbers)
+                .Validate(phoneNumberRule);
+            var exception = Assert.Throws<ArgumentNullException>(() => employeeRule.Build());
+            Assert.Equal("Value cannot be null." + Environment.NewLine + "Parameter name: format", exception.Message);
         }
 
         [Fact]
         public void ConstructorThrowsIfChildExpressionIsNull()
         {
-            var exception = Assert.Throws<ArgumentNullException>(() => new CollectionChildValidationRule<Employee, PhoneNumber>(null, Substitute.For<MessageFormatter<Employee>>("dummyMessage"), null, Substitute.For<IValidationRule<PhoneNumber>>()));
+            var phoneNumberRule = ValidationRule.For<PhoneNumber>()
+                .Validate(p => true)
+                .Message("Error message")
+                .Build();
+            var employeeRule = ValidationRule.For<Employee>()
+                .ForChildren<PhoneNumber>(null)
+                .Validate(phoneNumberRule)
+                .Message("Error message");
+            var exception = Assert.Throws<ArgumentNullException>(() => employeeRule.Build());
             Assert.Equal("Value cannot be null." + Environment.NewLine + "Parameter name: collection", exception.Message);
         }
 
         [Fact]
         public void ConstructorThrowsIfChildValidationRuleIsNull()
         {
-            var exception = Assert.Throws<ArgumentNullException>(() => new CollectionChildValidationRule<Employee, PhoneNumber>(null, Substitute.For<MessageFormatter<Employee>>("dummyMessage"), e => e.ContactNumbers, null));
+            var employeeRule = ValidationRule.For<Employee>()
+                .ForChildren(e => e.ContactNumbers)
+                .Validate(null)
+                .Message("Error message");
+            var exception = Assert.Throws<ArgumentNullException>(() => employeeRule.Build());
             Assert.Equal("Value cannot be null." + Environment.NewLine + "Parameter name: childValidationRule", exception.Message);
         }
 
         [Fact]
         public void ExecuteReturnsPassedWhenPreconditionIsFalse()
         {
-            var rule = new CollectionChildValidationRule<Employee, PhoneNumber>(e => false,
-                Substitute.For<MessageFormatter<Employee>>("Message"),
-                e => e.ContactNumbers,
-                GetFailingValidationRule());
-
-            var result = rule.Execute(GetEmployee());
+            var phoneNumberRule = ValidationRule.For<PhoneNumber>()
+                .Validate(p => false)
+                .Message("Error message")
+                .Build();
+            var employeeRule = ValidationRule.For<Employee>()
+                .ForChildren(e => e.ContactNumbers)
+                .When(e => false)
+                .Validate(phoneNumberRule)
+                .Message("Error message");
+            var result = employeeRule.Build().Execute(GetEmployee());
             Assert.True(result);
         }
 
@@ -58,23 +81,31 @@ namespace XVal.Core.Tests
         {
             var employee = GetEmployee();
             employee.ContactNumbers = null;
-            var rule = new CollectionChildValidationRule<Employee, PhoneNumber>(e => true,
-                GetEmployeeIdFormatter(),
-                e => e.ContactNumbers,
-                GetFailingValidationRule());
-            var result = rule.Execute(employee);
+            var phoneNumberRule = ValidationRule.For<PhoneNumber>()
+                .Validate(p => false)
+                .Message("Error message")
+                .Build();
+            var employeeRule = ValidationRule.For<Employee>()
+                .ForChildren(e => e.ContactNumbers)
+                .Validate(phoneNumberRule)
+                .Message("Error message");
+            var result = employeeRule.Build().Execute(employee);
             Assert.True(result);
         }
 
         [Fact]
         public void ExecuteReturnsPassedWhenChildRulePassesForAllTheChilds()
         {
-            var rule = new CollectionChildValidationRule<Employee, PhoneNumber>(null,
-                GetEmployeeIdFormatter(),
-                e => e.ContactNumbers,
-                GetPassingValidationRule());
+            var phoneNumberRule = ValidationRule.For<PhoneNumber>()
+                .Validate(p => true)
+                .Message("Error message")
+                .Build();
+            var employeeRule = ValidationRule.For<Employee>()
+                .ForChildren(e => e.ContactNumbers)
+                .Validate(phoneNumberRule)
+                .Message("Error message");
 
-            var result = rule.Execute(GetEmployee());
+            var result = employeeRule.Build().Execute(GetEmployee());
             Assert.True(result);
         }
 
@@ -82,38 +113,23 @@ namespace XVal.Core.Tests
         public void ExecuteReturnFailWhenChildRuleFails()
         {
             var employee = GetEmployee();
-            var rule = new CollectionChildValidationRule<Employee, PhoneNumber>(e => true,
-                GetEmployeeIdFormatter(),
-                e => e.ContactNumbers,
-                GetFailingValidationRule());
-            var result = rule.Execute(employee);
-            var expected = ValidationResult.Failed(GetEmployeeIdFormatter().GetMessage(employee)
+            var phoneNumberRule = ValidationRule.For<PhoneNumber>()
+                .Validate(p => false)
+                .Message("Phone number = {0}", p => p.Number)
+                .Build();
+            var employeeRule = ValidationRule.For<Employee>()
+                .ForChildren(e => e.ContactNumbers)
+                .Validate(phoneNumberRule)
+                .Message("Employee Id = {0}", e => e.Id);
+
+            var result = employeeRule.Build().Execute(employee);
+            var expected = ValidationResult.Failed($"Employee Id = {employee.Id}"
                 + Environment.NewLine
-                + GetPhoneNumberFormatter().GetMessage(employee.ContactNumbers.First())
+                + $"Phone number = {employee.ContactNumbers.First().Number}"
                 + Environment.NewLine
-                + GetPhoneNumberFormatter().GetMessage(employee.ContactNumbers.Skip(1).First()));
+                + $"Phone number = {employee.ContactNumbers.Skip(1).First().Number}");
             Assert.Equal(expected.Result, result.Result);
             Assert.Equal(expected.Message, result.Message);
-        }
-
-        private static MessageFormatter<Employee> GetEmployeeIdFormatter()
-        {
-            return new MessageFormatter<Employee>("Employee Id = {0}", e => e.Id);
-        }
-
-        private static MessageFormatter<PhoneNumber> GetPhoneNumberFormatter()
-        {
-            return new MessageFormatter<PhoneNumber>("Phone number = {0}", p => p.Number);
-        }
-
-        private static ValidationRule<PhoneNumber> GetPassingValidationRule()
-        {
-            return new ValidationRule<PhoneNumber>(null, GetPhoneNumberFormatter(), e => true);
-        }
-
-        private static ValidationRule<PhoneNumber> GetFailingValidationRule()
-        {
-            return new ValidationRule<PhoneNumber>(null, GetPhoneNumberFormatter(), e => false);
         }
 
         private Employee GetEmployee()
