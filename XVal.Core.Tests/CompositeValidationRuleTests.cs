@@ -8,50 +8,91 @@ namespace XVal.Core.Tests
     public class CompositeValidationRuleTests
     {
         [Fact]
-        public void ConstructorThrowsIfMessageFormatterIsNull()
+        public void ConstructorThrowsIfMessageFormatIsNull()
         {
-            var exception = Assert.Throws<ArgumentNullException>(() => new CompositeValidationRule<Employee>(null, null, GetPassingValidationRule().ToEnumerable()));
-            Assert.Equal("Value cannot be null." + Environment.NewLine + "Parameter name: messageFormatter", exception.Message);
+            var childRule = ValidationRule.For<Employee>()
+                .Validate(e => true)
+                .Message("Error message")
+                .Build();
+            var employeeRule = ValidationRule.For<Employee>()
+                .Validate(childRule);
+            var exception = Assert.Throws<ArgumentNullException>(() => employeeRule.Build());
+            Assert.Equal("Value cannot be null." + Environment.NewLine + "Parameter name: format", exception.Message);
         }
 
         [Fact]
-        public void ConstructorThrowsIfChildRulesIsNull()
+        public void ExecuteReturnsPassedWhenChildRuleIsNull()
         {
-            var exception = Assert.Throws<ArgumentNullException>(() => new CompositeValidationRule<Employee>(null, GetEmployeeIdFormatter(), null));
-            Assert.Equal("Value cannot be null." + Environment.NewLine + "Parameter name: childRules", exception.Message);
+            var employeeRule = ValidationRule.For<Employee>()
+                .Validate((ValidationRule<Employee>)null)
+                .Message("Error message")
+                .Build();
+            var result = employeeRule.Execute(GetEmployee());
+            Assert.True(result);
+        }
+
+        [Fact]
+        public void ExecuteReturnsPassedWhenChildRulesIsEmpty()
+        {
+            var employeeRule = ValidationRule.For<Employee>()
+                .Validate()
+                .Message("Error message")
+                .Build();
+            var result = employeeRule.Execute(GetEmployee());
+            Assert.True(result);
         }
 
         [Fact]
         public void ExecuteReturnsPassedWhenPreconditionIsFalse()
         {
-            var rule = new CompositeValidationRule<Employee>(e => false,
-                Substitute.For<MessageFormatter<Employee>>("Message"),
-                GetFailingValidationRule().ToEnumerable());
-            var result = rule.Execute(GetEmployee());
+            var childRule = ValidationRule.For<Employee>()
+                .Validate(e => false)
+                .Message("Error message")
+                .Build();
+            var employeeRule = ValidationRule.For<Employee>()
+                .Validate(childRule)
+                .When(e => false)
+                .Message("Error message")
+                .Build();
+            var result = employeeRule.Execute(GetEmployee());
             Assert.True(result);
         }
 
         [Fact]
         public void ExecuteReturnsPassedWhenChildRuleReturnsPassed()
         {
-            var rule = new CompositeValidationRule<Employee>(e => true, 
-                GetEmployeeIdFormatter(),
-                GetPassingValidationRule().ToEnumerable());
-            var result = rule.Execute(GetEmployee());
+            var childRule = ValidationRule.For<Employee>()
+                .Validate(e => true)
+                .Message("Error message")
+                .Build();
+            var employeeRule = ValidationRule.For<Employee>()
+                .Validate(childRule)
+                .Message("Error message")
+                .Build();
+            var result = employeeRule.Execute(GetEmployee());
             Assert.True(result);
         }
 
         [Fact]
         public void ExecuteReturnsFailedWhenOneChildRuleReturnsFalse()
         {
+            var childRule1 = ValidationRule.For<Employee>()
+                .Validate(e => false)
+                .Message("Employee Name = {0} {1}", e => e.Firstname, e => e.Lastname)
+                .Build();
+            var childRule2 = ValidationRule.For<Employee>()
+                .Validate(e => true)
+                .Message("City = {0}", e => e.Address.City)
+                .Build();
+            var employeeRule = ValidationRule.For<Employee>()
+                .Validate(childRule1, childRule2)
+                .Message("Employee Id = {0}", e => e.Id)
+                .Build();
             var employee = GetEmployee();
-            var rule = new CompositeValidationRule<Employee>(e => true,
-                GetEmployeeNameFormatter(),
-                GetFailingValidationRule().ToEnumerable());
-            var result = rule.Execute(employee);
-            var expected = ValidationResult.Failed(GetEmployeeNameFormatter().GetMessage(employee)
+            var result = employeeRule.Execute(employee);
+            var expected = ValidationResult.Failed($"Employee Id = {employee.Id}"
                 + Environment.NewLine
-                + GetEmployeeIdFormatter().GetMessage(employee));
+                + $"Employee Name = {employee.Firstname} {employee.Lastname}");
             Assert.Equal(expected.Result, result.Result);
             Assert.Equal(expected.Message, result.Message);
         }
@@ -59,39 +100,27 @@ namespace XVal.Core.Tests
         [Fact]
         public void ExecuteReturnsFailedWhenMoreThanOneChildRuleReturnsFalse()
         {
+            var childRule1 = ValidationRule.For<Employee>()
+                .Validate(e => false)
+                .Message("Employee Name = {0} {1}", e => e.Firstname, e => e.Lastname)
+                .Build();
+            var childRule2 = ValidationRule.For<Employee>()
+                .Validate(e => false)
+                .Message("City = {0}", e => e.Address.City)
+                .Build();
+            var employeeRule = ValidationRule.For<Employee>()
+                .Validate(childRule1, childRule2)
+                .Message("Employee Id = {0}", e => e.Id)
+                .Build();
             var employee = GetEmployee();
-            var rule = new CompositeValidationRule<Employee>(null,
-                GetEmployeeNameFormatter(),
-                new[] { GetFailingValidationRule(), GetFailingValidationRule() });
-            var result = rule.Execute(employee);
-            var expected = ValidationResult.Failed(GetEmployeeNameFormatter().GetMessage(employee)
-                + Environment.NewLine
-                + GetEmployeeIdFormatter().GetMessage(employee)
-                + Environment.NewLine
-                + GetEmployeeIdFormatter().GetMessage(employee));
-            //Assert.Equal(expected, result);
+            var result = employeeRule.Execute(employee);
+            var expected = ValidationResult.Failed($"Employee Id = {employee.Id}"
+                                                   + Environment.NewLine
+                                                   + $"Employee Name = {employee.Firstname} {employee.Lastname}"
+                                                   + Environment.NewLine
+                                                   + $"City = {employee.Address.City}");
             Assert.Equal(expected.Result, result.Result);
             Assert.Equal(expected.Message, result.Message);
-        }
-
-        private static ValidationRule<Employee> GetPassingValidationRule()
-        {
-            return new ValidationRule<Employee>(null, GetEmployeeIdFormatter(), e => true);
-        }
-
-        private static ValidationRule<Employee> GetFailingValidationRule()
-        {
-            return new ValidationRule<Employee>(null, GetEmployeeIdFormatter(), e => false);
-        }
-
-        private static MessageFormatter<Employee> GetEmployeeIdFormatter()
-        {
-            return new MessageFormatter<Employee>("Employee Id = {0}", e => e.Id);
-        }
-
-        private static MessageFormatter<Employee> GetEmployeeNameFormatter()
-        {
-            return new MessageFormatter<Employee>("Employee Name = {0} {1}", e => e.Firstname, e => e.Lastname);
         }
 
         private Employee GetEmployee()
@@ -101,6 +130,10 @@ namespace XVal.Core.Tests
                 Id = 1,
                 Firstname = "Sandeep",
                 Lastname = "Morwal",
+                Address = new Address
+                {
+                    City = "Pune"
+                }
             };
         }
     }

@@ -14,7 +14,7 @@ namespace XVal.Core
             childRules.ThrowIfArgumentNull(nameof(childRules));
             Precondition = precondition;
             MessageFormatter = messageFormatter;
-            ChildRules = childRules;
+            ChildRules = childRules.Where(c => c != null);
         }
 
         public Predicate<TEntity> Precondition { get; }
@@ -28,6 +28,11 @@ namespace XVal.Core
 
         private ValidationResult ExecuteHelper(TEntity entity)
         {
+            if (!ChildRules.Any())
+            {
+                return ValidationResult.Passed();
+            }
+
             var childResult = ChildRules.Select(c => c.Execute(entity)).Aggregate(ValidationResult.Combine);
             if (childResult)
             {
