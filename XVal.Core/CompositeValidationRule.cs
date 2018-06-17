@@ -6,7 +6,7 @@ namespace XVal.Core
 {
     public class CompositeValidationRule<TEntity> : IValidationRule<TEntity>
     {
-        public CompositeValidationRule(Predicate<TEntity> precondition,
+        internal CompositeValidationRule(Predicate<TEntity> precondition,
             MessageFormatter<TEntity> messageFormatter,
             IEnumerable<IValidationRule<TEntity>> childRules)
         {

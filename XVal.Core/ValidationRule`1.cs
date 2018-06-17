@@ -4,7 +4,7 @@ namespace XVal.Core
 {
     public class ValidationRule<TEntity> : IValidationRule<TEntity>
     {
-        public ValidationRule(Predicate<TEntity> precondition,
+        internal ValidationRule(Predicate<TEntity> precondition,
             MessageFormatter<TEntity> messageFormatter,
             Predicate<TEntity> validateExprn)
         {

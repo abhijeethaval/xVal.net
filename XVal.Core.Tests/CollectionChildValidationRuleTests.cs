@@ -12,12 +12,17 @@ namespace XVal.Core.Tests
         [Fact]
         public void ImplementsIValidationRule()
         {
-            var rule = new CollectionChildValidationRule<Employee, PhoneNumber>(e => true,
-                Substitute.For<MessageFormatter<Employee>>("dummyMessage"),
-                Substitute.For<Func<Employee, IEnumerable<PhoneNumber>>>(),
-                Substitute.For<IValidationRule<PhoneNumber>>());
+            var phoneNumberRule = ValidationRule.For<PhoneNumber>()
+                .Validate(p => true)
+                .Message("Error message")
+                .Build();
+            var employeeRule = ValidationRule.For<Employee>()
+                .ForChildren(e => e.ContactNumbers)
+                .Validate(phoneNumberRule)
+                .Message("Error message")
+                .Build();
 
-            Assert.IsAssignableFrom<IValidationRule<Employee>>(rule);
+            Assert.IsAssignableFrom<IValidationRule<Employee>>(employeeRule);
         }
 
         [Fact]

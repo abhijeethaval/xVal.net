@@ -4,7 +4,7 @@ namespace XVal.Core
 {
     public class ChildValidationRule<TEntity, TChild> : IValidationRule<TEntity>
     {
-        public ChildValidationRule(Predicate<TEntity> precondition,
+        internal ChildValidationRule(Predicate<TEntity> precondition,
             MessageFormatter<TEntity> messageFormatter,
             Func<TEntity, TChild> childExprn,
             IValidationRule<TChild> childValidationRule)

@@ -10,11 +10,15 @@ namespace XVal.Core.Tests
         [Fact]
         public void ImplementsIValidationRule()
         {
-            var rule = new ChildValidationRule<Employee, Address>(null,
-                Substitute.For<MessageFormatter<Employee>>("dummyMessage"),
-                Substitute.For<Func<Employee, Address>>(),
-                Substitute.For<IValidationRule<Address>>());
-
+            var addressRule = ValidationRule.For<Address>()
+                .Validate(a => true)
+                .Message("Error message")
+                .Build();
+            var rule = ValidationRule.For<Employee>()
+                .ForChild(e => e.Address)
+                .Validate(addressRule)
+                .Message("Error message")
+                .Build();
             Assert.IsAssignableFrom<IValidationRule<Employee>>(rule);
         }
 
