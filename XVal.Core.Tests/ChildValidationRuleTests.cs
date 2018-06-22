@@ -23,7 +23,7 @@ namespace XVal.Core.Tests
         }
 
         [Fact]
-        public void ConstructorThrowsIfMessageFormatIsNull()
+        public void BuilderThrowsIfMessageFormatIsNull()
         {
             var addressRule = ValidationRule.For<Address>()
                 .Validate(a => true)
@@ -31,14 +31,13 @@ namespace XVal.Core.Tests
                 .Build();
             var employeeRuleBuilder = ValidationRule.For<Employee>()
                 .ForChild(e => e.Address)
-                .Validate(addressRule)
-                .Message(null);
-            var exception = Assert.Throws<ArgumentNullException>(() => employeeRuleBuilder.Build());
+                .Validate(addressRule);
+            var exception = Assert.Throws<ArgumentNullException>(() => employeeRuleBuilder.Message((string)null));
             Assert.Equal("Value cannot be null." + Environment.NewLine + "Parameter name: format", exception.Message);
         }
 
         [Fact]
-        public void ConstructorThrowsIfChildExpressionIsNull()
+        public void BuilderThrowsIfChildExpressionIsNull()
         {
             var addressRule = ValidationRule.For<Address>()
                 .Validate(a => true)
@@ -53,7 +52,7 @@ namespace XVal.Core.Tests
         }
 
         [Fact]
-        public void ConstructorThrowsIfChildValidationRuleIsNull()
+        public void BuilderThrowsIfChildValidationRuleIsNull()
         {
             var employeeRuleBuilder = ValidationRule.For<Employee>()
                 .ForChild(e => e.Address)
@@ -117,14 +116,14 @@ namespace XVal.Core.Tests
             var employee = GetEmployee();
             var addressRule = ValidationRule.For<Address>()
                 .Validate(a => false)
-                .Message("City = {0}", a => a.City)
+                .Message(a => $"City = {a.City}")
                 .Build();
             var employeeRuleBuilder = ValidationRule.For<Employee>()
                 .ForChild(e => e.Address)
                 .Validate(addressRule)
-                .Message("Employee Id = {0}", e => e.Id);
+                .Message(e => $"Employee Id = {e.Id}, Employee Name = {e.Firstname}");
             var result = employeeRuleBuilder.Build().Execute(employee);
-            var expected = ValidationResult.Failed($"Employee Id = {employee.Id}"
+            var expected = ValidationResult.Failed($"Employee Id = {employee.Id}, Employee Name = {employee.Firstname}"
                 + Environment.NewLine
                 + $"City = {employee.Address.City}");
             Assert.Equal(expected.Result, result.Result);

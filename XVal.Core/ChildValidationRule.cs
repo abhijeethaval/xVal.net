@@ -5,7 +5,7 @@ namespace XVal.Core
     public class ChildValidationRule<TEntity, TChild> : IValidationRule<TEntity>
     {
         internal ChildValidationRule(Predicate<TEntity> precondition,
-            MessageFormatter<TEntity> messageFormatter,
+            Func<TEntity, string> messageFormatter,
             Func<TEntity, TChild> childExprn,
             IValidationRule<TChild> childValidationRule)
         {
@@ -19,7 +19,7 @@ namespace XVal.Core
         }
 
         public Predicate<TEntity> Precondition { get; }
-        public MessageFormatter<TEntity> MessageFormatter { get; }
+        public Func<TEntity, string> MessageFormatter { get; }
         public Func<TEntity, TChild> ChildExprn { get; }
         public IValidationRule<TChild> InternalValidationRule { get; }
 
@@ -37,7 +37,7 @@ namespace XVal.Core
             var childResult = InternalValidationRule.Execute(child);
             return childResult
                 ? ValidationResult.Passed()
-                : ValidationResult.Failed(MessageFormatter.GetMessage(entity) + Environment.NewLine + childResult.Message);
+                : ValidationResult.Failed(MessageFormatter.Invoke(entity) + Environment.NewLine + childResult.Message);
 
         }
     }
