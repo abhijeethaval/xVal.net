@@ -23,11 +23,18 @@ namespace XVal.Core
         }
 
         public ValidationRuleBuilder<TEntity> Message(
-            string format,
-            params Func<TEntity, object>[] formatParameters)
+             string format,
+             params Func<TEntity, object>[] formatParameters)
         {
             format.ThrowIfArgumentNullOrWhiteSpace(nameof(format));
             _messageFormatter = e => string.Format(format, formatParameters.Select(f => f(e)).ToArray());
+            return this;
+        }
+
+        public ValidationRuleBuilder<TEntity> Message(Func<TEntity, string> messageFormatter)
+        {
+            messageFormatter.ThrowIfArgumentNull(nameof(messageFormatter));
+            _messageFormatter = messageFormatter;
             return this;
         }
 

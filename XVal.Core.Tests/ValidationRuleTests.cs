@@ -76,7 +76,7 @@ namespace XVal.Core.Tests
             var employee = new Employee { Id = 1 };
             var rule = ValidationRule.For<Employee>()
                 .Validate(e => false)
-                .Message("Employee Id = {0}", e => e.Id)
+                .Message(e => $"Employee Id = {e.Id}")
                 .Build();
             var result = rule.Execute(employee);
             var expected = ValidationResult.Failed(string.Format("Employee Id = {0}", employee.Id));
@@ -90,7 +90,7 @@ namespace XVal.Core.Tests
             var rule = ValidationRule.For<Employee>()
                 .Validate(e => false)
                 .When(e => true)
-                .Message("Employee Id = {0}", e => e.Id)
+                .Message(e => $"Employee Id = {e.Id}")
                 .Build();
             var result = rule.Execute(employee);
             var expected = ValidationResult.Failed(string.Format("Employee Id = {0}", employee.Id));
