@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace XVal.Core
 {
@@ -6,11 +7,12 @@ namespace XVal.Core
     {
         private readonly Predicate<TEntity> _validateExpn;
         private Predicate<TEntity> _precondition;
-        private Func<TEntity, object>[] _formatParameters;
-        private string _format;
+        private Func<TEntity, string> _messageFormatter;
+
 
         public ValidationRuleBuilder(Predicate<TEntity> validateExpn)
         {
+            validateExpn.ThrowIfArgumentNull(nameof(validateExpn));
             _validateExpn = validateExpn;
         }
 
@@ -20,18 +22,20 @@ namespace XVal.Core
             return this;
         }
 
-        public ValidationRuleBuilder<TEntity> Message(string format,
+        public ValidationRuleBuilder<TEntity> Message(
+            string format,
             params Func<TEntity, object>[] formatParameters)
         {
-            _format = format;
-            _formatParameters = formatParameters;
+            format.ThrowIfArgumentNullOrWhiteSpace(nameof(format));
+            _messageFormatter = e => string.Format(format, formatParameters.Select(f => f(e)).ToArray());
             return this;
         }
 
         public ValidationRule<TEntity> Build()
         {
-            return new ValidationRule<TEntity>(_precondition,
-                new MessageFormatter<TEntity>(_format, _formatParameters),
+            return new ValidationRule<TEntity>(
+                _precondition,
+                _messageFormatter,
                 _validateExpn);
         }
 

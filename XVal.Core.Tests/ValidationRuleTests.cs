@@ -7,14 +7,32 @@ namespace XVal.Core.Tests
     public class ValidationRuleTests
     {
         [Fact]
-        public void BuildThrowsIfMessageFormatIsNull()
+        public void MessageMethodThrowsIfMessageFormatIsNull()
         {
             var ruleBuilder = ValidationRule.For<Employee>()
                 .Validate(e => true)
-                .When(e => true)
-                .Message(null, null);
-            var exception = Assert.Throws<ArgumentNullException>(() => ruleBuilder.Build());
+                .When(e => true);
+            var exception = Assert.Throws<ArgumentNullException>(() => ruleBuilder.Message(null, null));
             Assert.Equal("Value cannot be null." + Environment.NewLine + "Parameter name: format", exception.Message);
+        }
+
+        [Fact]
+        public void BuildThrowsIfMessageFormatIsNotSet()
+        {
+            var ruleBuilder = ValidationRule.For<Employee>()
+                .Validate(e => true)
+                .When(e => true);
+            var exception = Assert.Throws<ArgumentNullException>(() => ruleBuilder.Build());
+            Assert.Equal("Value cannot be null." + Environment.NewLine + "Parameter name: messageFormatter", exception.Message);
+        }
+
+        [Fact]
+        public void ValidateThrowsIfValidationExpressionIsNull()
+        {
+            var exception = Assert.Throws<ArgumentNullException>(() =>
+                ValidationRule.For<Employee>()
+                    .Validate((Predicate<Employee>)null));
+            Assert.Equal("Value cannot be null." + Environment.NewLine + "Parameter name: validateExpn", exception.Message);
         }
 
         [Fact]

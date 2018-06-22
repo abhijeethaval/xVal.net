@@ -4,8 +4,9 @@ namespace XVal.Core
 {
     public class ValidationRule<TEntity> : IValidationRule<TEntity>
     {
-        internal ValidationRule(Predicate<TEntity> precondition,
-            MessageFormatter<TEntity> messageFormatter,
+        internal ValidationRule(
+            Predicate<TEntity> precondition,
+            Func<TEntity, string> messageFormatter,
             Predicate<TEntity> validateExprn)
         {
             messageFormatter.ThrowIfArgumentNull(nameof(messageFormatter));
@@ -17,7 +18,7 @@ namespace XVal.Core
 
         public Predicate<TEntity> Precondition { get; }
         public Predicate<TEntity> ValidateExprn { get; }
-        public MessageFormatter<TEntity> MessageFormatter { get; }
+        public Func<TEntity, string> MessageFormatter { get; set; }
 
         public ValidationResult Execute(TEntity entity)
         {
@@ -29,7 +30,7 @@ namespace XVal.Core
             var result = ValidateExprn(entity);
             if (!result)
             {
-                return ValidationResult.Failed(MessageFormatter.GetMessage(entity));
+                return ValidationResult.Failed(MessageFormatter.Invoke(entity));
             }
 
             return ValidationResult.Passed();
