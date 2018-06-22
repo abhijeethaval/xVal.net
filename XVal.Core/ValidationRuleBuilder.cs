@@ -8,7 +8,7 @@ namespace XVal.Core
     {
         private readonly Predicate<TEntity> _validateExpn;
 
-        public ValidationRuleBuilder(Predicate<TEntity> validateExpn)
+        internal ValidationRuleBuilder(Predicate<TEntity> validateExpn)
         {
             validateExpn.ThrowIfArgumentNull(nameof(validateExpn));
             _validateExpn = validateExpn;

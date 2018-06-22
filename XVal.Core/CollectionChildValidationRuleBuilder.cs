@@ -8,7 +8,7 @@ namespace XVal.Core
         private readonly Func<TEntity, IEnumerable<TChild>> _childrenExprn;
         private IValidationRule<TChild> _childRule;
 
-        public CollectionChildValidationRuleBuilder(Func<TEntity, IEnumerable<TChild>> childrenExprn)
+        internal CollectionChildValidationRuleBuilder(Func<TEntity, IEnumerable<TChild>> childrenExprn)
         {
             _childrenExprn = childrenExprn;
         }

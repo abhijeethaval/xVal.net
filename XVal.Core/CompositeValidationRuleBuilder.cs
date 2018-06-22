@@ -7,7 +7,7 @@ namespace XVal.Core
     {
         private readonly IEnumerable<IValidationRule<TEntity>> _childRules;
 
-        public CompositeValidationRuleBuilder(IEnumerable<IValidationRule<TEntity>> childRules)
+        internal CompositeValidationRuleBuilder(IEnumerable<IValidationRule<TEntity>> childRules)
         {
             _childRules = childRules;
         }
