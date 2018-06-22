@@ -7,7 +7,7 @@ namespace XVal.Core
     public class CollectionChildValidationRule<TEntity, TChild> : IValidationRule<TEntity>
     {
         internal CollectionChildValidationRule(Predicate<TEntity> precondition,
-            MessageFormatter<TEntity> messageFormatter,
+            Func<TEntity, string> messageFormatter,
             Func<TEntity, IEnumerable<TChild>> collection,
             IValidationRule<TChild> childValidationRule)
         {
@@ -21,7 +21,7 @@ namespace XVal.Core
         }
 
         public Predicate<TEntity> Precondition { get; }
-        public MessageFormatter<TEntity> MessageFormatter { get; }
+        public Func<TEntity, string> MessageFormatter { get; }
         public Func<TEntity, IEnumerable<TChild>> Collection { get; }
         public IValidationRule<TChild> ChildValidationRule { get; }
 
@@ -41,7 +41,7 @@ namespace XVal.Core
                 var result = executeItemsQuery.Aggregate(ValidationResult.Combine);
                 return result
                     ? ValidationResult.Passed()
-                    : ValidationResult.Failed(MessageFormatter.GetMessage(entity) + Environment.NewLine + result.Message);
+                    : ValidationResult.Failed(MessageFormatter.Invoke(entity) + Environment.NewLine + result.Message);
             }
 
             return ValidationResult.Passed();

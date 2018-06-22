@@ -26,7 +26,7 @@ namespace XVal.Core.Tests
         }
 
         [Fact]
-        public void ConstructorThrowsIfMessageFormatIsNull()
+        public void BuilderThrowsIfMessageFormatIsNull()
         {
             var phoneNumberRule = ValidationRule.For<PhoneNumber>()
                 .Validate(p => true)
@@ -36,7 +36,7 @@ namespace XVal.Core.Tests
                 .ForChildren(e => e.ContactNumbers)
                 .Validate(phoneNumberRule);
             var exception = Assert.Throws<ArgumentNullException>(() => employeeRule.Build());
-            Assert.Equal("Value cannot be null." + Environment.NewLine + "Parameter name: format", exception.Message);
+            Assert.Equal("Value cannot be null." + Environment.NewLine + "Parameter name: messageFormatter", exception.Message);
         }
 
         [Fact]
@@ -125,10 +125,10 @@ namespace XVal.Core.Tests
             var employeeRule = ValidationRule.For<Employee>()
                 .ForChildren(e => e.ContactNumbers)
                 .Validate(phoneNumberRule)
-                .Message("Employee Id = {0}", e => e.Id);
+                .Message(e => $"Employee Id = {e.Id}, Employee Name = {e.Firstname}");
 
             var result = employeeRule.Build().Execute(employee);
-            var expected = ValidationResult.Failed($"Employee Id = {employee.Id}"
+            var expected = ValidationResult.Failed($"Employee Id = {employee.Id}, Employee Name = {employee.Firstname}"
                 + Environment.NewLine
                 + $"Phone number = {employee.ContactNumbers.First().Number}"
                 + Environment.NewLine

@@ -3,13 +3,10 @@ using System.Collections.Generic;
 
 namespace XVal.Core
 {
-    public class CollectionChildValidationRuleBuilder<TEntity, TChild>
+    public sealed class CollectionChildValidationRuleBuilder<TEntity, TChild> : ValidationRuleBuilderBase<CollectionChildValidationRuleBuilder<TEntity, TChild>, TEntity>
     {
         private readonly Func<TEntity, IEnumerable<TChild>> _childrenExprn;
         private IValidationRule<TChild> _childRule;
-        private Predicate<TEntity> _precondition;
-        private string _messageFormat;
-        private Func<TEntity, object>[] _formatParameters;
 
         public CollectionChildValidationRuleBuilder(Func<TEntity, IEnumerable<TChild>> childrenExprn)
         {
@@ -21,25 +18,12 @@ namespace XVal.Core
             _childRule = childRule;
             return this;
         }
-
-        public CollectionChildValidationRuleBuilder<TEntity, TChild> When(Predicate<TEntity> precondition)
-        {
-            _precondition = precondition;
-            return this;
-        }
-
-        public CollectionChildValidationRuleBuilder<TEntity, TChild> Message(string format,
-            params Func<TEntity, object>[] formatParameters)
-        {
-            _messageFormat = format;
-            _formatParameters = formatParameters;
-            return this;
-        }
-
+     
         public CollectionChildValidationRule<TEntity, TChild> Build()
         {
-            return new CollectionChildValidationRule<TEntity, TChild>(_precondition,
-                new MessageFormatter<TEntity>(_messageFormat, _formatParameters),
+            return new CollectionChildValidationRule<TEntity, TChild>(
+                Precondition,
+                MessageFormatter,
                 _childrenExprn,
                 _childRule);
         }

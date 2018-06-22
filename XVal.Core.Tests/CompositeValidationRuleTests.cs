@@ -8,7 +8,7 @@ namespace XVal.Core.Tests
     public class CompositeValidationRuleTests
     {
         [Fact]
-        public void ConstructorThrowsIfMessageFormatIsNull()
+        public void BuilderThrowsIfMessageFormatIsNull()
         {
             var childRule = ValidationRule.For<Employee>()
                 .Validate(e => true)
@@ -17,7 +17,7 @@ namespace XVal.Core.Tests
             var employeeRule = ValidationRule.For<Employee>()
                 .Validate(childRule);
             var exception = Assert.Throws<ArgumentNullException>(() => employeeRule.Build());
-            Assert.Equal("Value cannot be null." + Environment.NewLine + "Parameter name: format", exception.Message);
+            Assert.Equal("Value cannot be null." + Environment.NewLine + "Parameter name: messageFormatter", exception.Message);
         }
 
         [Fact]
@@ -82,15 +82,15 @@ namespace XVal.Core.Tests
                 .Build();
             var childRule2 = ValidationRule.For<Employee>()
                 .Validate(e => true)
-                .Message("City = {0}", e => e.Address.City)
+                .Message(e => $"City = {e.Address.City}")
                 .Build();
             var employeeRule = ValidationRule.For<Employee>()
                 .Validate(childRule1, childRule2)
-                .Message("Employee Id = {0}", e => e.Id)
+                .Message(e => $"Employee Id = {e.Id}, Employee Name = {e.Firstname}")
                 .Build();
             var employee = GetEmployee();
             var result = employeeRule.Execute(employee);
-            var expected = ValidationResult.Failed($"Employee Id = {employee.Id}"
+            var expected = ValidationResult.Failed($"Employee Id = {employee.Id}, Employee Name = {employee.Firstname}"
                 + Environment.NewLine
                 + $"Employee Name = {employee.Firstname} {employee.Lastname}");
             Assert.Equal(expected.Result, result.Result);

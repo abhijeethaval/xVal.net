@@ -7,7 +7,7 @@ namespace XVal.Core
     public class CompositeValidationRule<TEntity> : IValidationRule<TEntity>
     {
         internal CompositeValidationRule(Predicate<TEntity> precondition,
-            MessageFormatter<TEntity> messageFormatter,
+            Func<TEntity, string> messageFormatter,
             IEnumerable<IValidationRule<TEntity>> childRules)
         {
             messageFormatter.ThrowIfArgumentNull(nameof(messageFormatter));
@@ -19,7 +19,7 @@ namespace XVal.Core
 
         public Predicate<TEntity> Precondition { get; }
         public IEnumerable<IValidationRule<TEntity>> ChildRules { get; }
-        public MessageFormatter<TEntity> MessageFormatter { get; }
+        public Func<TEntity, string> MessageFormatter { get; }
 
         public ValidationResult Execute(TEntity entity)
         {
@@ -39,7 +39,7 @@ namespace XVal.Core
                 return ValidationResult.Passed();
             }
 
-            return ValidationResult.Failed(MessageFormatter.GetMessage(entity) + Environment.NewLine + childResult.Message);
+            return ValidationResult.Failed(MessageFormatter.Invoke(entity) + Environment.NewLine + childResult.Message);
         }
     }
 }

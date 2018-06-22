@@ -1,14 +1,12 @@
 ﻿using System;
-using System.Linq;
 
 namespace XVal.Core
 {
-    public class ChildValidationRuleBuilder<TEntity, TChild>
+    public sealed class ChildValidationRuleBuilder<TEntity, TChild>
+        : ValidationRuleBuilderBase<ChildValidationRuleBuilder<TEntity, TChild>, TEntity>
     {
         private readonly Func<TEntity, TChild> _childExprn;
         private IValidationRule<TChild> _childRule;
-        private Predicate<TEntity> _precondition;
-        private Func<TEntity, string> _messageFormatter;
 
         public ChildValidationRuleBuilder(Func<TEntity, TChild> childExprn)
         {
@@ -21,32 +19,11 @@ namespace XVal.Core
             return this;
         }
 
-        public ChildValidationRuleBuilder<TEntity, TChild> When(Predicate<TEntity> precondition)
-        {
-            _precondition = precondition;
-            return this;
-        }
-
-        public ChildValidationRuleBuilder<TEntity, TChild> Message(
-            string format,
-            params Func<TEntity, object>[] formatParameters)
-        {
-            format.ThrowIfArgumentNullOrWhiteSpace(nameof(format));
-            _messageFormatter = e => string.Format(format, formatParameters.Select(f => f(e)).ToArray());
-            return this;
-        }
-
-        public ChildValidationRuleBuilder<TEntity, TChild> Message(
-            Func<TEntity, string> messageFormatter)
-        {
-            _messageFormatter = messageFormatter;
-            return this;
-        }
-
         public ChildValidationRule<TEntity, TChild> Build()
         {
-            return new ChildValidationRule<TEntity, TChild>(_precondition,
-                _messageFormatter,
+            return new ChildValidationRule<TEntity, TChild>(
+                Precondition,
+                MessageFormatter,
                 _childExprn,
                 _childRule);
         }
