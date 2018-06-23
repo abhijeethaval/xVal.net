@@ -33,18 +33,14 @@ namespace XVal.Core
         private ValidationResult ExecuteHelper(TEntity entity)
         {
             var collection = Collection.Invoke(entity);
-            if (collection != null)
-            {
-                var executeItemsQuery = from item in collection
-                                        select ChildValidationRule.Execute(item);
-
-                var result = executeItemsQuery.Aggregate(ValidationResult.Combine);
-                return result
-                    ? ValidationResult.Passed()
-                    : ValidationResult.Failed(MessageFormatter.Invoke(entity) + Environment.NewLine + result.Message);
-            }
-
-            return ValidationResult.Passed();
+            if (collection == null) return ValidationResult.Passed();
+            var children = collection.ToList();
+            if (!children.Any()) return ValidationResult.Passed();
+            var executeItemsQuery = children.Select(item => ChildValidationRule.Execute(item));
+            var result = executeItemsQuery.Aggregate(ValidationResult.Combine);
+            return result
+                ? ValidationResult.Passed()
+                : ValidationResult.Failed(MessageFormatter.Invoke(entity) + Environment.NewLine + result.Message);
         }
     }
 }
