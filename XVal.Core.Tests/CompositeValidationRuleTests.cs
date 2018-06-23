@@ -108,10 +108,9 @@ namespace XVal.Core.Tests
                 .Validate(e => false)
                 .Message("City = {0}", e => e.Address.City)
                 .Build();
-            var employeeRule = ValidationRule.For<Employee>()
+            CompositeValidationRule<Employee> employeeRule = ValidationRule.For<Employee>()
                 .Validate(childRule1, childRule2)
-                .Message("Employee Id = {0}", e => e.Id)
-                .Build();
+                .Message("Employee Id = {0}", e => e.Id);
             var employee = GetEmployee();
             var result = employeeRule.Execute(employee);
             var expected = ValidationResult.Failed($"Employee Id = {employee.Id}"

@@ -118,11 +118,11 @@ namespace XVal.Core.Tests
                 .Validate(a => false)
                 .Message(a => $"City = {a.City}")
                 .Build();
-            var employeeRuleBuilder = ValidationRule.For<Employee>()
+            ChildValidationRule<Employee, Address> employeeRule = ValidationRule.For<Employee>()
                 .ForChild(e => e.Address)
                 .Validate(addressRule)
                 .Message(e => $"Employee Id = {e.Id}, Employee Name = {e.Firstname}");
-            var result = employeeRuleBuilder.Build().Execute(employee);
+            var result = employeeRule.Execute(employee);
             var expected = ValidationResult.Failed($"Employee Id = {employee.Id}, Employee Name = {employee.Firstname}"
                 + Environment.NewLine
                 + $"City = {employee.Address.City}");
@@ -140,7 +140,6 @@ namespace XVal.Core.Tests
                 Address = new Address
                 {
                     City = "Mumbai",
-                    Street = "Marine Drive",
                 }
             };
         }

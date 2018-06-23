@@ -99,10 +99,16 @@ namespace XVal.Core.Tests
             Assert.Equal(shouldHashCodeEqual, result1.GetHashCode() == result2.GetHashCode());
         }
 
-        public static IEnumerable<object[]> EqualsTestData => GenericEqualsTestData.Concat(new[] { ValidationResult.Failed("Message1"), new object(), false }.ToEnumerable());
+        public static IEnumerable<object[]> EqualsTestData => GenericEqualsTestData.Concat(
+            new[]
+            {
+                new object[]{ValidationResult.Failed("Message1"), new object(), false},
+                new object[]{ValidationResult.Failed("Message1"), null, false},
+            });
 
         public static IEnumerable<object[]> GetHashCodeData => GenericEqualsTestData.Concat(
-            new[] {
+            new[] 
+            {
                 new object[]{ ValidationResult.Failed("Abcd"), ValidationResult.Failed("Abcd"), true },
                 new object[]{ ValidationResult.Failed("abcd efgh"), ValidationResult.Failed("abcd efgh"), true },
                 new object[]{ ValidationResult.Failed("some message"), ValidationResult.Failed("some message"), true },

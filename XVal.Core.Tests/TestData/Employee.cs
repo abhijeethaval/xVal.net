@@ -16,20 +16,10 @@ namespace XVal.Core.Tests.TestData
     public class PhoneNumber
     {
         public int? Number { get; set; }
-
-        public PhoneType? Type { get; set; }
-    }
-
-    public enum PhoneType
-    {
-        Mobile,
-        Home,
-        Office,
     }
 
     public class Address
     {
-        public string Street { get; set; }
         public string City { get; set; }
     }
 }

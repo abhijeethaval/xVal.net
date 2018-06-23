@@ -122,12 +122,12 @@ namespace XVal.Core.Tests
                 .Validate(p => false)
                 .Message("Phone number = {0}", p => p.Number)
                 .Build();
-            var employeeRule = ValidationRule.For<Employee>()
+            CollectionChildValidationRule<Employee, PhoneNumber> employeeRule = ValidationRule.For<Employee>()
                 .ForChildren(e => e.ContactNumbers)
                 .Validate(phoneNumberRule)
                 .Message(e => $"Employee Id = {e.Id}, Employee Name = {e.Firstname}");
 
-            var result = employeeRule.Build().Execute(employee);
+            var result = employeeRule.Execute(employee);
             var expected = ValidationResult.Failed($"Employee Id = {employee.Id}, Employee Name = {employee.Firstname}"
                 + Environment.NewLine
                 + $"Phone number = {employee.ContactNumbers.First().Number}"
@@ -147,13 +147,12 @@ namespace XVal.Core.Tests
                 Address = new Address
                 {
                     City = "Mumbai",
-                    Street = "Marine Drive",
                 },
 
                 ContactNumbers = new List<PhoneNumber>
                 {
-                    new PhoneNumber { Number = 123456789, Type = PhoneType.Mobile },
-                    new PhoneNumber { Number = 023433344, Type = PhoneType.Home },
+                    new PhoneNumber { Number = 123456789 },
+                    new PhoneNumber { Number = 023433344 },
                 }
             };
         }

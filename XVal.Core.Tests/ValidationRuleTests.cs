@@ -87,11 +87,10 @@ namespace XVal.Core.Tests
         public void ExecuteReturnFailedWhenValidateExpressonReturnsFalseAndPreconditionIsTrue()
         {
             var employee = new Employee { Id = 1 };
-            var rule = ValidationRule.For<Employee>()
+            ValidationRule<Employee> rule = ValidationRule.For<Employee>()
                 .Validate(e => false)
                 .When(e => true)
-                .Message(e => $"Employee Id = {e.Id}")
-                .Build();
+                .Message(e => $"Employee Id = {e.Id}");
             var result = rule.Execute(employee);
             var expected = ValidationResult.Failed(string.Format("Employee Id = {0}", employee.Id));
             Assert.Equal(expected, result);
