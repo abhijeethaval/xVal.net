@@ -9,6 +9,7 @@ namespace XVal.Core.Tests
 {
     public class Entity
     {
+        public int Id { get; set; }
         public string Name { get; set; }
     }
 
@@ -44,20 +45,57 @@ namespace XVal.Core.Tests
             {
                 new object[]
                 {
-                    new Project(),
+                    new Project
+                    {
+                        Id = 1,
+                        Manager = new Resource
+                        {
+                            Id = 1,
+                            PrimarySkill = new Skill{ Id = 3 },
+                            SecondarySkills = new List<Skill>{ new Skill{ Id = 4 }, new Skill{ Id = 5 }}
+                        },
+                        Resources = new List<Resource>
+                        {
+                            new Resource
+                            {
+                                Id = 2,
+                                PrimarySkill = new Skill{ Id = 4 },
+                                SecondarySkills = new List<Skill>{ new Skill{ Id = 3 }, new Skill{ Id = 5 }}
+                            },
+                            new Resource
+                            {
+                                Id = 3,
+                                PrimarySkill = new Skill{ Id = 5 },
+                                SecondarySkills = new List<Skill>{ new Skill{ Id = 3 }, new Skill{ Id = 4 }}
+                            },
+                        }
+                    },
                     ValidationResult.Failed(
-                        "Validation errors for project" + Environment.NewLine +
-                        "Name is mandatory")
-                },
-                new object[]
-                {
-                    new Project { Manager = new Resource()},
-                    ValidationResult.Failed(
-                        "Validation errors for project" + Environment.NewLine +
-                        "Name is mandatory" + Environment.NewLine +
-                        "Validation errors for manager" + Environment.NewLine +
-                        "Validation errors for the resource" + Environment.NewLine +
-                        "Name is mandatory")
+                    "Validation errors for project. Project Id = 1" + Environment.NewLine +
+                    "Project name is mandatory. Project Id = 1" + Environment.NewLine +
+                    "Validation errors for manager" + Environment.NewLine +
+                    "Validation errors for the resource" + Environment.NewLine +
+                    "Resource name is mandatory. Resource Id = 1" + Environment.NewLine +
+                    "Resource Id = 1" + Environment.NewLine +
+                    "Skill name is mandatory. Skill Id = 3" + Environment.NewLine +
+                    "Resource Id = 1" + Environment.NewLine +
+                    "Skill name is mandatory. Skill Id = 4" + Environment.NewLine +
+                    "Skill name is mandatory. Skill Id = 5" + Environment.NewLine +
+                    "Validation errors for resources" + Environment.NewLine +
+                    "Validation errors for the resource" + Environment.NewLine +
+                    "Resource name is mandatory. Resource Id = 2" + Environment.NewLine +
+                    "Resource Id = 2" + Environment.NewLine +
+                    "Skill name is mandatory. Skill Id = 4" + Environment.NewLine +
+                    "Resource Id = 2" + Environment.NewLine +
+                    "Skill name is mandatory. Skill Id = 3" + Environment.NewLine +
+                    "Skill name is mandatory. Skill Id = 5" + Environment.NewLine +
+                    "Validation errors for the resource" + Environment.NewLine +
+                    "Resource name is mandatory. Resource Id = 3" + Environment.NewLine +
+                    "Resource Id = 3" + Environment.NewLine +
+                    "Skill name is mandatory. Skill Id = 5" + Environment.NewLine +
+                    "Resource Id = 3" + Environment.NewLine +
+                    "Skill name is mandatory. Skill Id = 3" + Environment.NewLine +
+                    "Skill name is mandatory. Skill Id = 4")
                 },
             };
 
@@ -65,19 +103,19 @@ namespace XVal.Core.Tests
         {
             var entityNameRule = ValidationRule.For<Entity>()
                 .Validate(e => !string.IsNullOrWhiteSpace(e.Name))
-                .Message("Name is mandatory")
+                .Message(e => $"{e.GetType().Name} name is mandatory. {e.GetType().Name} Id = {e.Id}")
                 .Build();
 
             var resourceSecondarySkillsRule = ValidationRule.For<Resource>()
                 .ForChildren(m => m.SecondarySkills)
                 .Validate(entityNameRule)
-                .Message(m => $"Resource name = {m.Name}")
+                .Message(m => $"Resource Id = {m.Id}")
                 .Build();
 
             var resourcePrimarySkillRule = ValidationRule.For<Resource>()
                 .ForChild(m => m.PrimarySkill)
                 .Validate(entityNameRule)
-                .Message(m => $"Resource name = {m.Name}")
+                .Message(m => $"Resource Id = {m.Id}")
                 .Build();
 
             var resourceRule = ValidationRule.For<Resource>()
@@ -99,7 +137,7 @@ namespace XVal.Core.Tests
 
             var projectRule = ValidationRule.For<Project>()
                 .Validate(entityNameRule, projectManagerRule, projectResourcesRule)
-                .Message("Validation errors for project")
+                .Message(p => $"Validation errors for project. Project Id = {p.Id}")
                 .Build();
             return projectRule;
         }
