@@ -53,6 +53,14 @@ r
                  .Message("Firstname is mandatory. Employee Id = {0}", e => e.Id)
                  .Build();
 ```
+* There is overload of Message method which allows to use string interpolation in C# as below.
+```
+            var firstnameRule = ValidationRule.For<Employee>()
+                 .Validate(e => e.Firstname != null)
+                 .When(e => e.Id != null)
+                 .Message(e => $"Firstname is mandatory. Employee Id = {e.Id}")
+                 .Build();
+```
 * Example of ChildValidationRule<TEntity, TChild>
     Here we are creating rule for validating that City property of an address of an employee is required field.
 ```
