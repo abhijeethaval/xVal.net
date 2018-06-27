@@ -10,8 +10,7 @@ namespace XVal.Core
 
         internal ValidationRuleBuilder(Predicate<TEntity> validateExpn)
         {
-            validateExpn.ThrowIfArgumentNull(nameof(validateExpn));
-            _validateExpn = validateExpn;
+            _validateExpn = validateExpn.Validate(nameof(validateExpn));
         }
 
         public ValidationRule<TEntity> Build()
@@ -19,7 +18,7 @@ namespace XVal.Core
             return new ValidationRule<TEntity>(
                 Precondition,
                 MessageFormatter,
-                _validateExpn);
+                new SimpleValidationStrategy<TEntity>(_validateExpn));
         }
 
         public static implicit operator ValidationRule<TEntity>(ValidationRuleBuilder<TEntity> builder)

@@ -4,42 +4,32 @@ using System.Linq;
 
 namespace XVal.Core
 {
-    public class CompositeValidationRule<TEntity> : IValidationRule<TEntity>
+    internal class CompositeValidationStrategy<TEntity> : IValidationRule<TEntity>
     {
-        internal CompositeValidationRule(Predicate<TEntity> precondition,
-            Func<TEntity, string> messageFormatter,
-            IEnumerable<IValidationRule<TEntity>> childRules)
-        {
-            messageFormatter.ThrowIfArgumentNull(nameof(messageFormatter));
-            childRules.ThrowIfArgumentNull(nameof(childRules));
-            Precondition = precondition;
-            MessageFormatter = messageFormatter;
-            ChildRules = childRules.Where(c => c != null);
-        }
+        private readonly List<IValidationRule<TEntity>> _childRules;
 
-        public Predicate<TEntity> Precondition { get; }
-        public IEnumerable<IValidationRule<TEntity>> ChildRules { get; }
-        public Func<TEntity, string> MessageFormatter { get; }
+        internal CompositeValidationStrategy(IEnumerable<IValidationRule<TEntity>> childRules)
+        {
+            _childRules = childRules.Validate(nameof(childRules)).ToList();
+        }
 
         public ValidationResult Execute(TEntity entity)
         {
-            return ValidationRuleHelper.Validate(entity, Precondition, ExecuteHelper);
+            var childRules = _childRules.Where(c => c != null).ToList();
+            return childRules.Any()
+                ? childRules.Select(c => c.Execute(entity)).Aggregate(ValidationResult.Combine)
+                : ValidationResult.Passed();
         }
+    }
 
-        private ValidationResult ExecuteHelper(TEntity entity)
+    public class CompositeValidationRule<TEntity> : ValidationRule<TEntity>
+    {
+        internal CompositeValidationRule(
+            Predicate<TEntity> precondition,
+            Func<TEntity, string> messageFormatter,
+            IEnumerable<IValidationRule<TEntity>> childRules)
+        : base(precondition, messageFormatter, new CompositeValidationStrategy<TEntity>(childRules))
         {
-            if (!ChildRules.Any())
-            {
-                return ValidationResult.Passed();
-            }
-
-            var childResult = ChildRules.Select(c => c.Execute(entity)).Aggregate(ValidationResult.Combine);
-            if (childResult)
-            {
-                return ValidationResult.Passed();
-            }
-
-            return ValidationResult.Failed(MessageFormatter.Invoke(entity) + Environment.NewLine + childResult.Message);
         }
     }
 }

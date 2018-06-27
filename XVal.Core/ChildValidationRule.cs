@@ -2,42 +2,35 @@
 
 namespace XVal.Core
 {
-    public class ChildValidationRule<TEntity, TChild> : IValidationRule<TEntity>
+    internal class ChildValidationStrategy<TEntity, TChild> : IValidationRule<TEntity>
+    {
+        private readonly Func<TEntity, TChild> _childExprn;
+        private readonly IValidationRule<TChild> _childValidationRule;
+
+        internal ChildValidationStrategy(
+            Func<TEntity, TChild> childExprn,
+            IValidationRule<TChild> childValidationRule)
+        {
+            _childExprn = childExprn.Validate(nameof(childExprn));
+            _childValidationRule = childValidationRule.Validate(nameof(childValidationRule));
+        }
+
+        public ValidationResult Execute(TEntity entity)
+        {
+            var child = _childExprn(entity);
+            return child == null ? ValidationResult.Passed() : _childValidationRule.Execute(child);
+        }
+    }
+
+    public class ChildValidationRule<TEntity, TChild> : ValidationRule<TEntity>
     {
         internal ChildValidationRule(Predicate<TEntity> precondition,
             Func<TEntity, string> messageFormatter,
             Func<TEntity, TChild> childExprn,
             IValidationRule<TChild> childValidationRule)
+        :base(precondition,messageFormatter, 
+            new ChildValidationStrategy<TEntity, TChild>(childExprn, childValidationRule))
         {
-            messageFormatter.ThrowIfArgumentNull(nameof(messageFormatter));
-            childExprn.ThrowIfArgumentNull(nameof(childExprn));
-            childValidationRule.ThrowIfArgumentNull(nameof(childValidationRule));
-            Precondition = precondition;
-            MessageFormatter = messageFormatter;
-            ChildExprn = childExprn;
-            InternalValidationRule = childValidationRule;
-        }
-
-        public Predicate<TEntity> Precondition { get; }
-        public Func<TEntity, string> MessageFormatter { get; }
-        public Func<TEntity, TChild> ChildExprn { get; }
-        public IValidationRule<TChild> InternalValidationRule { get; }
-
-        public ValidationResult Execute(TEntity entity)
-        {
-            return ValidationRuleHelper.Validate(entity,
-                Precondition,
-                ExecuteHelper);
-        }
-
-        private ValidationResult ExecuteHelper(TEntity entity)
-        {
-            var child = ChildExprn.Invoke(entity);
-            if (child == null) return ValidationResult.Passed();
-            var childResult = InternalValidationRule.Execute(child);
-            return childResult
-                ? ValidationResult.Passed()
-                : ValidationResult.Failed(MessageFormatter.Invoke(entity) + Environment.NewLine + childResult.Message);
 
         }
     }

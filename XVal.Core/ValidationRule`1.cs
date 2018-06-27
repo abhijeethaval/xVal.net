@@ -4,36 +4,37 @@ namespace XVal.Core
 {
     public class ValidationRule<TEntity> : IValidationRule<TEntity>
     {
+        private readonly IValidationRule<TEntity> _strategy;
+
         internal ValidationRule(
             Predicate<TEntity> precondition,
             Func<TEntity, string> messageFormatter,
-            Predicate<TEntity> validateExprn)
+            IValidationRule<TEntity> strategy)
         {
-            messageFormatter.ThrowIfArgumentNull(nameof(messageFormatter));
-            validateExprn.ThrowIfArgumentNull(nameof(validateExprn));
+            _strategy = strategy.Validate(nameof(strategy));
             Precondition = precondition;
-            MessageFormatter = messageFormatter;
-            ValidateExprn = validateExprn;
+            MessageFormatter = messageFormatter.Validate(nameof(messageFormatter));
         }
 
         public Predicate<TEntity> Precondition { get; }
-        public Predicate<TEntity> ValidateExprn { get; }
         public Func<TEntity, string> MessageFormatter { get; set; }
 
         public ValidationResult Execute(TEntity entity)
         {
-            return ValidationRuleHelper.Validate(entity, Precondition, ExecuteHelper);
-        }
-
-        private ValidationResult ExecuteHelper(TEntity entity)
-        {
-            var result = ValidateExprn(entity);
-            if (!result)
+            if (Precondition != null && !Precondition(entity))
             {
-                return ValidationResult.Failed(MessageFormatter.Invoke(entity));
+                return ValidationResult.Passed();
             }
 
-            return ValidationResult.Passed();
+            var result = _strategy.Execute(entity);
+            if (result.Result)
+            {
+                return ValidationResult.Passed();
+            }
+
+            var message =
+                $"{MessageFormatter(entity)}{(string.IsNullOrWhiteSpace(result.Message) ? null : $"{Environment.NewLine}{result.Message}")}";
+            return ValidationResult.Failed(message);
         }
     }
 }

@@ -12,7 +12,6 @@ namespace XVal.Core
 
         public static ValidationResult Failed(string message)
         {
-            message.ThrowIfArgumentNullOrWhiteSpace(nameof(message));
             return new ValidationResult(false, message);
         }
 
