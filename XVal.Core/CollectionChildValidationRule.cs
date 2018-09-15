@@ -6,25 +6,25 @@ namespace XVal.Core
 {
     internal class CollectionChildValidationStrategy<TEntity, TChild> : IValidationRule<TEntity>
     {
-        private readonly Func<TEntity, IEnumerable<TChild>> _collection;
+        private readonly Func<TEntity, IEnumerable<TChild>> _collectionExpression;
         private readonly IValidationRule<TChild> _childValidationRule;
 
         internal CollectionChildValidationStrategy(
             Func<TEntity, IEnumerable<TChild>> collection,
             IValidationRule<TChild> childValidationRule)
         {
-            _collection = collection.Validate(nameof(collection));
+            _collectionExpression = collection.Validate(nameof(collection));
             _childValidationRule = childValidationRule.Validate(nameof(childValidationRule));
         }
 
         public ValidationResult Execute(TEntity entity)
         {
-            var collection = _collection.Invoke(entity);
-            if (collection == null) return ValidationResult.Passed();
-            var children = collection.ToList();
-            if (!children.Any()) return ValidationResult.Passed();
-            var executeItemsQuery = children.Select(item => _childValidationRule.Execute(item));
-            return executeItemsQuery.Aggregate(ValidationResult.Combine);
+            var collection = _collectionExpression.Invoke(entity);
+            return collection == null
+                ? ValidationResult.Passed()
+                : collection
+                .Select(item => _childValidationRule.Execute(item))
+                .Aggregate(ValidationResult.Passed(), ValidationResult.Combine);
         }
     }
 

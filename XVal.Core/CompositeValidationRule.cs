@@ -6,20 +6,15 @@ namespace XVal.Core
 {
     internal class CompositeValidationStrategy<TEntity> : IValidationRule<TEntity>
     {
-        private readonly List<IValidationRule<TEntity>> _childRules;
+        private readonly IEnumerable<IValidationRule<TEntity>> _childRules;
 
-        internal CompositeValidationStrategy(IEnumerable<IValidationRule<TEntity>> childRules)
-        {
-            _childRules = childRules.Validate(nameof(childRules)).ToList();
-        }
+        internal CompositeValidationStrategy(IEnumerable<IValidationRule<TEntity>> childRules) => _childRules = childRules.Validate(nameof(childRules)).ToList();
 
         public ValidationResult Execute(TEntity entity)
-        {
-            var childRules = _childRules.Where(c => c != null).ToList();
-            return childRules.Any()
-                ? childRules.Select(c => c.Execute(entity)).Aggregate(ValidationResult.Combine)
-                : ValidationResult.Passed();
-        }
+            => _childRules
+            .Where(c => c != null)
+            .Select(c => c.Execute(entity))
+            .Aggregate(ValidationResult.Passed(), ValidationResult.Combine);
     }
 
     public class CompositeValidationRule<TEntity> : ValidationRule<TEntity>
