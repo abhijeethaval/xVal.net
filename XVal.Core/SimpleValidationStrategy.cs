@@ -8,6 +8,6 @@ namespace XVal.Core
 
         internal SimpleValidationStrategy(Predicate<TEntity> validateExprn) => _validateExprn = validateExprn;
 
-        public ValidationResult Execute(TEntity entity) => _validateExprn(entity) ? ValidationResult.Passed() : ValidationResult.Failed(null);
+        public ValidationResult Execute(TEntity entity) => _validateExprn(entity) ? ValidationResult.Passed() : ValidationResult.Failed(string.Empty);
     }
 }

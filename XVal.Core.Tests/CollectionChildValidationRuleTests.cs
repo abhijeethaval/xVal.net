@@ -21,7 +21,7 @@ namespace XVal.Core.Tests
                 .Message("Error message")
                 .Build();
 
-            Assert.IsAssignableFrom<IValidationRule<Employee>>(employeeRule);
+            _ = Assert.IsAssignableFrom<IValidationRule<Employee>>(employeeRule);
         }
 
         [Fact]
@@ -34,8 +34,8 @@ namespace XVal.Core.Tests
             var employeeRule = ValidationRule.For<Employee>()
                 .ForChildren(e => e.ContactNumbers)
                 .Validate(phoneNumberRule);
-            var exception = Assert.Throws<ArgumentNullException>(() => employeeRule.Build());
-            Assert.Equal("Value cannot be null. (Parameter 'messageFormatter')", exception.Message);
+            var exception = Assert.Throws<InvalidOperationException>(() => employeeRule.Build());
+            Assert.Equal("Cannot build without message. Please provide message or message formatter by calling Message", exception.Message);
         }
 
         [Fact]
@@ -60,8 +60,8 @@ namespace XVal.Core.Tests
                 .ForChildren(e => e.ContactNumbers)
                 .Validate(null)
                 .Message("Error message");
-            var exception = Assert.Throws<ArgumentNullException>(() => employeeRule.Build());
-            Assert.Equal("Value cannot be null. (Parameter 'childValidationRule')", exception.Message);
+            var exception = Assert.Throws<InvalidOperationException>(() => employeeRule.Build());
+            Assert.Equal("Cannot build without child rule. Please provide child rule by calling Validate", exception.Message);
         }
 
         [Fact]

@@ -22,8 +22,8 @@ namespace XVal.Core.Tests
             var ruleBuilder = ValidationRule.For<Employee>()
                 .Validate(e => true)
                 .When(e => true);
-            var exception = Assert.Throws<ArgumentNullException>(() => ruleBuilder.Build());
-            Assert.Equal("Value cannot be null. (Parameter 'messageFormatter')", exception.Message);
+            var exception = Assert.Throws<InvalidOperationException>(() => ruleBuilder.Build());
+            Assert.Equal("Cannot build without message. Please provide message or message formatter by calling Message", exception.Message);
         }
 
         [Fact]

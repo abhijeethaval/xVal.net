@@ -1,8 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net40;net45;net46</TargetFrameworks>
-
+    <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
     <PackageId>XVal</PackageId>
     <Authors>Abhijeet Haval</Authors>
     <Company />
@@ -13,6 +12,7 @@
     <AssemblyVersion>1.1.0.0</AssemblyVersion>
     <PackageReleaseNotes>Added support for net4, net45 and net46</PackageReleaseNotes>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Nullable>enable</Nullable>
   </PropertyGroup>
 
 </Project>

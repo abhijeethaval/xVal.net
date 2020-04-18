@@ -3,12 +3,12 @@ using System.Linq;
 
 namespace XVal.Core
 {
-    public class ValidationRuleBuilderBase<TBuilder, TEntity>
+    public abstract class ValidationRuleBuilderBase<TBuilder, TEntity>
         where TBuilder : ValidationRuleBuilderBase<TBuilder, TEntity>
     {
-        protected Func<TEntity, string> MessageFormatter { get; private set; }
-        protected Predicate<TEntity> Precondition { get; private set; }
-        
+        protected Func<TEntity, string>? MessageFormatter { get; private set; }
+        protected Predicate<TEntity> Precondition { get; private set; } = _ => true;
+
         public TBuilder When(Predicate<TEntity> precondition)
         {
             Precondition = precondition;

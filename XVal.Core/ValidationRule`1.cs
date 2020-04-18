@@ -33,7 +33,7 @@ namespace XVal.Core
             }
 
             var message =
-                $"{MessageFormatter(entity)}{(string.IsNullOrWhiteSpace(result.Message) ? null : $"{Environment.NewLine}{result.Message}")}";
+                $"{MessageFormatter(entity)}{(string.IsNullOrWhiteSpace(result.Message) ? string.Empty : $"{Environment.NewLine}{result.Message}")}";
             return ValidationResult.Failed(message);
         }
     }

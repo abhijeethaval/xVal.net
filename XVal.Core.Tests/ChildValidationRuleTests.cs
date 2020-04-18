@@ -57,8 +57,8 @@ namespace XVal.Core.Tests
                 .ForChild(e => e.Address)
                 .Validate(null)
                 .Message("Error message");
-            var exception = Assert.Throws<ArgumentNullException>(() => employeeRuleBuilder.Build());
-            Assert.Equal("Value cannot be null. (Parameter 'childValidationRule')", exception.Message);
+            var exception = Assert.Throws<InvalidOperationException>(() => employeeRuleBuilder.Build());
+            Assert.Equal("Cannot build without child rule. Please provide child rule by calling Validate", exception.Message);
         }
 
         [Fact]

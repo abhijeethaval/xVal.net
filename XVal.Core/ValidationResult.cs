@@ -6,13 +6,13 @@ namespace XVal.Core
     {
         public bool Result { get; }
 
-        public string Message { get; }
+        public string? Message { get; }
 
         public static ValidationResult Passed() => new ValidationResult(true, null);
 
         public static ValidationResult Failed(string message) => new ValidationResult(false, message);
 
-        private ValidationResult(bool result, string message)
+        private ValidationResult(bool result, string? message)
         {
             Result = result;
             Message = message;
@@ -27,7 +27,7 @@ namespace XVal.Core
             ? result1
             : Failed(result1.Message + Environment.NewLine + result2.Message);
 
-        public override bool Equals(object obj)
+        public override bool Equals(object? obj)
             => obj is null
             ? false
             : obj.GetType() != typeof(ValidationResult)
