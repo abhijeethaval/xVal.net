@@ -11,8 +11,8 @@ namespace XVal.Core
             Func<TEntity, TChild> childExprn,
             IValidationRule<TChild> childValidationRule)
         {
-            _childExprn = childExprn.Validate(nameof(childExprn));
-            _childValidationRule = childValidationRule.Validate(nameof(childValidationRule));
+            _childExprn = childExprn ?? throw new ArgumentNullException(nameof(childExprn));
+            _childValidationRule = childValidationRule ?? throw new ArgumentNullException(nameof(childValidationRule));
         }
 
         public ValidationResult Execute(TEntity entity)
@@ -28,7 +28,7 @@ namespace XVal.Core
             Func<TEntity, string> messageFormatter,
             Func<TEntity, TChild> childExprn,
             IValidationRule<TChild> childValidationRule)
-        :base(precondition,messageFormatter, 
+        : base(precondition, messageFormatter,
             new ChildValidationStrategy<TEntity, TChild>(childExprn, childValidationRule))
         {
 

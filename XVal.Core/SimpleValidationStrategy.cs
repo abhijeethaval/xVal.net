@@ -6,14 +6,8 @@ namespace XVal.Core
     {
         private readonly Predicate<TEntity> _validateExprn;
 
-        internal SimpleValidationStrategy(Predicate<TEntity> validateExprn)
-        {
-            _validateExprn = validateExprn;
-        }
+        internal SimpleValidationStrategy(Predicate<TEntity> validateExprn) => _validateExprn = validateExprn;
 
-        public ValidationResult Execute(TEntity entity)
-        {
-            return _validateExprn(entity) ? ValidationResult.Passed() : ValidationResult.Failed(null);
-        }
+        public ValidationResult Execute(TEntity entity) => _validateExprn(entity) ? ValidationResult.Passed() : ValidationResult.Failed(null);
     }
 }

@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Linq;
 
 namespace XVal.Core
 {
@@ -8,22 +7,15 @@ namespace XVal.Core
     {
         private readonly Predicate<TEntity> _validateExpn;
 
-        internal ValidationRuleBuilder(Predicate<TEntity> validateExpn)
-        {
-            _validateExpn = validateExpn.Validate(nameof(validateExpn));
-        }
+        internal ValidationRuleBuilder(Predicate<TEntity> validateExpn) 
+            => _validateExpn = validateExpn ?? throw new ArgumentNullException(nameof(validateExpn));
 
-        public ValidationRule<TEntity> Build()
-        {
-            return new ValidationRule<TEntity>(
+        public ValidationRule<TEntity> Build() => new ValidationRule<TEntity>(
                 Precondition,
                 MessageFormatter,
                 new SimpleValidationStrategy<TEntity>(_validateExpn));
-        }
 
         public static implicit operator ValidationRule<TEntity>(ValidationRuleBuilder<TEntity> builder)
-        {
-            return builder.Build();
-        }
+            => builder.Build();
     }
 }

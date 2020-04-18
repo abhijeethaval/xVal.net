@@ -11,9 +11,9 @@ namespace XVal.Core
             Func<TEntity, string> messageFormatter,
             IValidationRule<TEntity> strategy)
         {
-            _strategy = strategy.Validate(nameof(strategy));
+            _strategy = strategy ?? throw new ArgumentNullException(nameof(strategy));
             Precondition = precondition;
-            MessageFormatter = messageFormatter.Validate(nameof(messageFormatter));
+            MessageFormatter = messageFormatter ?? throw new ArgumentNullException(nameof(messageFormatter));
         }
 
         public Predicate<TEntity> Precondition { get; }
@@ -21,7 +21,7 @@ namespace XVal.Core
 
         public ValidationResult Execute(TEntity entity)
         {
-            if (Precondition != null && !Precondition(entity))
+            if (!(Precondition is null) && !Precondition(entity))
             {
                 return ValidationResult.Passed();
             }

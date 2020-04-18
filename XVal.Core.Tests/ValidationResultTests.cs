@@ -50,38 +50,23 @@ namespace XVal.Core.Tests
 
         [Theory]
         [MemberData(nameof(EqualsTestData))]
-        public void EqualsWorksCorrectly(ValidationResult result, object obj, bool expected)
-        {
-            Assert.Equal(expected, result.Equals(obj));
-        }
+        public void EqualsWorksCorrectly(ValidationResult result, object obj, bool expected) => Assert.Equal(expected, result.Equals(obj));
 
         [Theory]
         [MemberData(nameof(GenericEqualsTestData))]
-        public void GenericEqualsWorksCorrectly(ValidationResult result, ValidationResult other, bool expected)
-        {
-            Assert.Equal(expected, result.Equals(other));
-        }
+        public void GenericEqualsWorksCorrectly(ValidationResult result, ValidationResult other, bool expected) => Assert.Equal(expected, result.Equals(other));
 
         [Theory]
         [MemberData(nameof(GenericEqualsTestData))]
-        public void EqualsOperatorWorksCorrectly(ValidationResult result, ValidationResult other, bool expected)
-        {
-            Assert.Equal(expected, result == other);
-        }
+        public void EqualsOperatorWorksCorrectly(ValidationResult result, ValidationResult other, bool expected) => Assert.Equal(expected, result == other);
 
         [Theory]
         [MemberData(nameof(GenericEqualsTestData))]
-        public void NotEqualsOperatorWorksCorrectly(ValidationResult result, ValidationResult other, bool oppositOfExpcted)
-        {
-            Assert.Equal(!oppositOfExpcted, result != other);
-        }
+        public void NotEqualsOperatorWorksCorrectly(ValidationResult result, ValidationResult other, bool oppositOfExpcted) => Assert.Equal(!oppositOfExpcted, result != other);
 
         [Theory]
         [MemberData(nameof(GetHashCodeData))]
-        public void GetHashCodeWorksCorrectly(ValidationResult result1, ValidationResult result2, bool shouldHashCodeEqual)
-        {
-            Assert.Equal(shouldHashCodeEqual, result1.GetHashCode() == result2.GetHashCode());
-        }
+        public void GetHashCodeWorksCorrectly(ValidationResult result1, ValidationResult result2, bool shouldHashCodeEqual) => Assert.Equal(shouldHashCodeEqual, result1.GetHashCode() == result2.GetHashCode());
 
         public static IEnumerable<object[]> EqualsTestData => GenericEqualsTestData.Concat(
             new[]

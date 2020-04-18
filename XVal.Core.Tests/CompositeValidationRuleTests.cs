@@ -1,5 +1,4 @@
-﻿using NSubstitute;
-using System;
+﻿using System;
 using Xunit;
 using XVal.Core.Tests.TestData;
 
@@ -17,7 +16,7 @@ namespace XVal.Core.Tests
             var employeeRule = ValidationRule.For<Employee>()
                 .Validate(childRule);
             var exception = Assert.Throws<ArgumentNullException>(() => employeeRule.Build());
-            Assert.Equal("Value cannot be null." + Environment.NewLine + "Parameter name: messageFormatter", exception.Message);
+            Assert.Equal("Value cannot be null. (Parameter 'messageFormatter')", exception.Message);
         }
 
         [Fact]
@@ -122,18 +121,15 @@ namespace XVal.Core.Tests
             Assert.Equal(expected.Message, result.Message);
         }
 
-        private Employee GetEmployee()
+        private Employee GetEmployee() => new Employee
         {
-            return new Employee
+            Id = 1,
+            Firstname = "Sandeep",
+            Lastname = "Morwal",
+            Address = new Address
             {
-                Id = 1,
-                Firstname = "Sandeep",
-                Lastname = "Morwal",
-                Address = new Address
-                {
-                    City = "Pune"
-                }
-            };
-        }
+                City = "Pune"
+            }
+        };
     }
 }

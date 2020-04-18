@@ -1,5 +1,4 @@
-﻿using NSubstitute;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using Xunit;
@@ -36,7 +35,7 @@ namespace XVal.Core.Tests
                 .ForChildren(e => e.ContactNumbers)
                 .Validate(phoneNumberRule);
             var exception = Assert.Throws<ArgumentNullException>(() => employeeRule.Build());
-            Assert.Equal("Value cannot be null." + Environment.NewLine + "Parameter name: messageFormatter", exception.Message);
+            Assert.Equal("Value cannot be null. (Parameter 'messageFormatter')", exception.Message);
         }
 
         [Fact]
@@ -51,7 +50,7 @@ namespace XVal.Core.Tests
                 .Validate(phoneNumberRule)
                 .Message("Error message");
             var exception = Assert.Throws<ArgumentNullException>(() => employeeRule.Build());
-            Assert.Equal("Value cannot be null." + Environment.NewLine + "Parameter name: collection", exception.Message);
+            Assert.Equal("Value cannot be null. (Parameter 'collection')", exception.Message);
         }
 
         [Fact]
@@ -62,7 +61,7 @@ namespace XVal.Core.Tests
                 .Validate(null)
                 .Message("Error message");
             var exception = Assert.Throws<ArgumentNullException>(() => employeeRule.Build());
-            Assert.Equal("Value cannot be null." + Environment.NewLine + "Parameter name: childValidationRule", exception.Message);
+            Assert.Equal("Value cannot be null. (Parameter 'childValidationRule')", exception.Message);
         }
 
         [Fact]
@@ -137,24 +136,21 @@ namespace XVal.Core.Tests
             Assert.Equal(expected.Message, result.Message);
         }
 
-        private Employee GetEmployee()
+        private Employee GetEmployee() => new Employee
         {
-            return new Employee
+            Id = 1,
+            Firstname = "Sandeep",
+            Lastname = "Morwal",
+            Address = new Address
             {
-                Id = 1,
-                Firstname = "Sandeep",
-                Lastname = "Morwal",
-                Address = new Address
-                {
-                    City = "Mumbai",
-                },
+                City = "Mumbai",
+            },
 
-                ContactNumbers = new List<PhoneNumber>
+            ContactNumbers = new List<PhoneNumber>
                 {
                     new PhoneNumber { Number = 123456789 },
                     new PhoneNumber { Number = 023433344 },
                 }
-            };
-        }
+        };
     }
 }

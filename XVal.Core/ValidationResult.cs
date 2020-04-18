@@ -10,10 +10,7 @@ namespace XVal.Core
 
         public static ValidationResult Passed() => new ValidationResult(true, null);
 
-        public static ValidationResult Failed(string message)
-        {
-            return new ValidationResult(false, message);
-        }
+        public static ValidationResult Failed(string message) => new ValidationResult(false, message);
 
         private ValidationResult(bool result, string message)
         {
@@ -22,43 +19,23 @@ namespace XVal.Core
         }
 
         public static ValidationResult Combine(ValidationResult result1, ValidationResult result2)
-        {
-            if (result1 && result2)
-            {
-                return result1;
-            }
-
-            if (result1 && !result2)
-            {
-                return result2;
-            }
-
-            if (!result1 && result2)
-            {
-                return result1;
-            }
-
-            return Failed(result1.Message + Environment.NewLine + result2.Message);
-        }
+            => result1 && result2
+            ? result1
+            : result1 && !result2
+            ? result2
+            : !result1 && result2
+            ? result1
+            : Failed(result1.Message + Environment.NewLine + result2.Message);
 
         public override bool Equals(object obj)
-        {
-            if (obj == null)
-            {
-                return false;
-            }
-            if (obj.GetType() != typeof(ValidationResult))
-            {
-                return false;
-            }
-
-            return Equals((ValidationResult)obj);
-        }
+            => obj is null
+            ? false
+            : obj.GetType() != typeof(ValidationResult)
+            ? false
+            : Equals((ValidationResult)obj);
 
         public bool Equals(ValidationResult other)
-        {
-            return other.Result == Result && other.Message == Message;
-        }
+            => other.Result == Result && other.Message == Message;
 
         public static bool operator ==(ValidationResult a, ValidationResult b) => a.Equals(b);
 
@@ -68,9 +45,9 @@ namespace XVal.Core
         {
             unchecked // Overflow is fine, just wrap
             {
-                int hash = 17;
-                hash = hash * 23 + Result.GetHashCode();
-                hash = hash * 23 + Message?.GetHashCode() ?? 0;
+                var hash = 17;
+                hash = (hash * 23) + Result.GetHashCode();
+                hash = (hash * 23) + Message?.GetHashCode() ?? 0;
                 return hash;
             }
         }

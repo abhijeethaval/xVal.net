@@ -13,8 +13,8 @@ namespace XVal.Core
             Func<TEntity, IEnumerable<TChild>> collection,
             IValidationRule<TChild> childValidationRule)
         {
-            _collectionExpression = collection.Validate(nameof(collection));
-            _childValidationRule = childValidationRule.Validate(nameof(childValidationRule));
+            _collectionExpression = collection ?? throw new ArgumentNullException(nameof(collection));
+            _childValidationRule = childValidationRule ?? throw new ArgumentNullException(nameof(childValidationRule));
         }
 
         public ValidationResult Execute(TEntity entity)

@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Runtime.Versioning;
-using System.Text;
-using Castle.Components.DictionaryAdapter;
 using Xunit;
 
 namespace XVal.Core.Tests

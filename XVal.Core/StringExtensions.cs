@@ -6,7 +6,7 @@ namespace XVal.Core
     {
         public static void ThrowIfArgumentNullOrWhiteSpace(this string argument, string argumentName)
         {
-            if (argument == null)
+            if (argument is null)
             {
                 throw new ArgumentNullException(argumentName);
             }

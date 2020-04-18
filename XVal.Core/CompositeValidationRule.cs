@@ -8,7 +8,8 @@ namespace XVal.Core
     {
         private readonly IEnumerable<IValidationRule<TEntity>> _childRules;
 
-        internal CompositeValidationStrategy(IEnumerable<IValidationRule<TEntity>> childRules) => _childRules = childRules.Validate(nameof(childRules)).ToList();
+        internal CompositeValidationStrategy(IEnumerable<IValidationRule<TEntity>> childRules)
+            => _childRules = (childRules ?? throw new ArgumentNullException(nameof(childRules))).ToList();
 
         public ValidationResult Execute(TEntity entity)
             => _childRules

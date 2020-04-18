@@ -13,7 +13,7 @@ namespace XVal.Core.Tests
                 .Validate(e => true)
                 .When(e => true);
             var exception = Assert.Throws<ArgumentNullException>(() => ruleBuilder.Message(null, null));
-            Assert.Equal("Value cannot be null." + Environment.NewLine + "Parameter name: format", exception.Message);
+            Assert.Equal("Value cannot be null. (Parameter 'format')", exception.Message);
         }
 
         [Fact]
@@ -23,7 +23,7 @@ namespace XVal.Core.Tests
                 .Validate(e => true)
                 .When(e => true);
             var exception = Assert.Throws<ArgumentNullException>(() => ruleBuilder.Build());
-            Assert.Equal("Value cannot be null." + Environment.NewLine + "Parameter name: messageFormatter", exception.Message);
+            Assert.Equal("Value cannot be null. (Parameter 'messageFormatter')", exception.Message);
         }
 
         [Fact]
@@ -32,7 +32,7 @@ namespace XVal.Core.Tests
             var exception = Assert.Throws<ArgumentNullException>(() =>
                 ValidationRule.For<Employee>()
                     .Validate((Predicate<Employee>)null));
-            Assert.Equal("Value cannot be null." + Environment.NewLine + "Parameter name: validateExpn", exception.Message);
+            Assert.Equal("Value cannot be null. (Parameter 'validateExpn')", exception.Message);
         }
 
         [Fact]

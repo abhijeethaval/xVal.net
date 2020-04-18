@@ -1,5 +1,4 @@
-﻿using NSubstitute;
-using System;
+﻿using System;
 using Xunit;
 using XVal.Core.Tests.TestData;
 
@@ -19,7 +18,7 @@ namespace XVal.Core.Tests
                 .Validate(addressRule)
                 .Message("Error message")
                 .Build();
-            Assert.IsAssignableFrom<IValidationRule<Employee>>(rule);
+            _ = Assert.IsAssignableFrom<IValidationRule<Employee>>(rule);
         }
 
         [Fact]
@@ -33,7 +32,7 @@ namespace XVal.Core.Tests
                 .ForChild(e => e.Address)
                 .Validate(addressRule);
             var exception = Assert.Throws<ArgumentNullException>(() => employeeRuleBuilder.Message((string)null));
-            Assert.Equal("Value cannot be null." + Environment.NewLine + "Parameter name: format", exception.Message);
+            Assert.Equal("Value cannot be null. (Parameter 'format')", exception.Message);
         }
 
         [Fact]
@@ -48,7 +47,7 @@ namespace XVal.Core.Tests
                 .Validate(addressRule)
                 .Message("Error message");
             var exception = Assert.Throws<ArgumentNullException>(() => employeeRuleBuilder.Build());
-            Assert.Equal("Value cannot be null." + Environment.NewLine + "Parameter name: childExprn", exception.Message);
+            Assert.Equal("Value cannot be null. (Parameter 'childExprn')", exception.Message);
         }
 
         [Fact]
@@ -59,7 +58,7 @@ namespace XVal.Core.Tests
                 .Validate(null)
                 .Message("Error message");
             var exception = Assert.Throws<ArgumentNullException>(() => employeeRuleBuilder.Build());
-            Assert.Equal("Value cannot be null." + Environment.NewLine + "Parameter name: childValidationRule", exception.Message);
+            Assert.Equal("Value cannot be null. (Parameter 'childValidationRule')", exception.Message);
         }
 
         [Fact]
@@ -130,18 +129,15 @@ namespace XVal.Core.Tests
             Assert.Equal(expected.Message, result.Message);
         }
 
-        private Employee GetEmployee()
+        private Employee GetEmployee() => new Employee
         {
-            return new Employee
+            Id = 1,
+            Firstname = "Sandeep",
+            Lastname = "Morwal",
+            Address = new Address
             {
-                Id = 1,
-                Firstname = "Sandeep",
-                Lastname = "Morwal",
-                Address = new Address
-                {
-                    City = "Mumbai",
-                }
-            };
-        }
+                City = "Mumbai",
+            }
+        };
     }
 }

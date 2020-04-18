@@ -8,10 +8,8 @@ namespace XVal.Core
         private readonly Func<TEntity, TChild> _childExprn;
         private IValidationRule<TChild> _childRule;
 
-        internal ChildValidationRuleBuilder(Func<TEntity, TChild> childExprn)
-        {
+        internal ChildValidationRuleBuilder(Func<TEntity, TChild> childExprn) =>
             _childExprn = childExprn;
-        }
 
         public ChildValidationRuleBuilder<TEntity, TChild> Validate(IValidationRule<TChild> childRule)
         {
@@ -19,18 +17,14 @@ namespace XVal.Core
             return this;
         }
 
-        public ChildValidationRule<TEntity, TChild> Build()
-        {
-            return new ChildValidationRule<TEntity, TChild>(
+        public ChildValidationRule<TEntity, TChild> Build() =>
+            new ChildValidationRule<TEntity, TChild>(
                 Precondition,
                 MessageFormatter,
                 _childExprn,
                 _childRule);
-        }
 
-        public static implicit operator ChildValidationRule<TEntity, TChild>(ChildValidationRuleBuilder<TEntity, TChild> builder)
-        {
-            return builder.Build();
-        }
+        public static implicit operator ChildValidationRule<TEntity, TChild>(ChildValidationRuleBuilder<TEntity, TChild> builder) =>
+            builder.Build();
     }
 }
