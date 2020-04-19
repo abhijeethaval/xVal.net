@@ -1,15 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
+    <TargetFrameworks>netstandard2.1</TargetFrameworks>
     <PackageId>XVal</PackageId>
     <Authors>Abhijeet Haval</Authors>
     <Company />
     <Product>XVal.net</Product>
     <Description>xVal.net is a fluent validation library for .NET. It is designed to be flexible. It allows specifying the validation rules for the .NET objects using fluent API.</Description>
-    <Version>1.1.0</Version>
-    <FileVersion>1.1.0.0</FileVersion>
-    <AssemblyVersion>1.1.0.0</AssemblyVersion>
+    <Version>2.0.0</Version>
+    <FileVersion>2.0.0.0</FileVersion>
+    <AssemblyVersion>2.0.0.0</AssemblyVersion>
     <PackageReleaseNotes>Added support for net4, net45 and net46</PackageReleaseNotes>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Nullable>enable</Nullable>
